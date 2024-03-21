@@ -49,22 +49,14 @@
                                                             <label class="custom-file-label"></label>
                                                         </div>
                                                     </div>
-                                                    @if (session('message'))
-                                                        <div class="error-message mb-3">
-                                                            {{ session('message') }}
-                                                        </div>
-                                                    @endif
+
                                                     <div style="text-align: center" class="mb-3">
                                                         <button type="submit" class="btn btn-primary">
                                                             <i class="fa-solid fa-file-circle-check"></i> Submit</button>
                                                     </div>
-
-                                                    @if ($errors->has('student_avatar'))
-                                                        <p class="error-message">
-                                                            {{ $errors->first('student_avatar') }}</p>
-                                                    @endif
                                                 </div>
                                                 <div class="col-lg-3"></div>
+
                                                 <script>
                                                     // Lắng nghe sự kiện khi người dùng chọn tệp tin
                                                     document.getElementById("avatarInput").addEventListener("change", function(event) {
@@ -89,4 +81,11 @@
             </div>
         </div>
     </div>
+    @if (session('success'))
+        <input type="hidden" id="inputToastSuccess" value="{{ session('success') }}">
+    @endif
+    @if (session('error'))
+        <input type="hidden" id="inputToastError" value="{{ session('error') }}">
+    @endif
+    <script src="{{ asset('assetAdmin/js/a/delete-students.js') }}"></script>
 @endsection

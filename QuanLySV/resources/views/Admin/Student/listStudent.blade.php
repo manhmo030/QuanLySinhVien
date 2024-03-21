@@ -1,8 +1,9 @@
 @extends('LayoutAdmin.index')
 @section('admin_content')
     @php
-        $i = 1;
+        $i = 0;
     @endphp
+
     <div class="content-body">
         <div class="container-fluid">
             <div class="row page-titles mx-0">
@@ -25,12 +26,18 @@
                     <div class="card">
                         <div class="card-header card-margin">
                             <div>
-                                <a href="{{ route('admin.addStudent.form') }}"><Span class="btn btn-primary">
-                                        <i class="fa-solid fa-user-plus"></i> Add Student</Span></a>
-                                <a href="{{ route('admin.importStudents.form') }}"><Span class="btn btn-primary">
-                                        <i class="fa-solid fa-file-import"></i> Import</Span></a>
-                                <a href="{{ route('admin.exportStudents.submit') }}"><Span class="btn btn-primary">
-                                        <i class="fa-solid fa-file-export"></i> Export</Span></a>
+                                @hasRole(['Admin', 'Add'])
+                                    <a href="{{ route('admin.addStudent.form') }}"><Span class="btn btn-primary">
+                                            <i class="fa-solid fa-user-plus"></i> Add Student</Span></a>
+                                    <a href="{{ route('admin.importStudents.form') }}"><Span class="btn btn-primary">
+                                            <i class="fa-solid fa-file-import"></i> Import</Span></a>
+                                    <a href="{{ route('admin.exportStudents.submit') }}"><Span class="btn btn-primary">
+                                            <i class="fa-solid fa-file-export"></i> Export</Span></a>
+                                @endhasRole
+                                @hasRole(['Delete'])
+                                    <a style="display: none" id="delete-student-btn"><Span class="btn btn-primary">
+                                            <i class="fa-solid fa-trash-can"></i> Delete</Span></a>
+                                @endhasRole
                             </div>
 
                             <div>
@@ -59,20 +66,22 @@
                                                 <th>Phone</th>
                                                 <th>Avatar</th>
                                                 <th>Class</th>
-                                                <th>year</th>
+                                                <th>Course</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
 
                                         <tbody>
                                             @foreach ($students as $student)
-                                                <tr
+                                                @php
+                                                    $i++;
+                                                @endphp
+                                                <tr id="studentValue-{{ $student->student_id }}"
                                                     class="green-hover
                                                     @if ($i % 2 == 0) tr-background @endif ">
-                                                    <td>@php
-                                                        echo $i;
-                                                        $i++;
-                                                    @endphp</td>
+                                                    <td><input class="student-checked" type="checkbox"
+                                                            name="studentsChecked[]" value="{{ $student->student_id }}">
+                                                    </td>
                                                     <td>{{ $student->student_code }}</td>
                                                     <td>{{ $student->first_name }} {{ $student->last_name }}</td>
                                                     <td>{{ $student->date_of_birth }}</td>
@@ -82,13 +91,11 @@
                                                     <td>{{ $student->phone }}</td>
                                                     <td>{{ $student->student_avatar }}</td>
                                                     <td>{{ $student->class_name }}</td>
-                                                    <td>{{ $student->year_of_admission }}</td>
+                                                    <td>{{ $student->course_name }}</td>
                                                     <td><span><a href="{{ route('admin.updateStudent.form', ['student_id' => $student->student_id]) }}"
                                                                 class="mr-4" data-toggle="tooltip" data-placement="top"
                                                                 title="Edit"><i class="fa-solid fa-pen-to-square"></i>
-                                                            </a><a href="javascript:void()" data-toggle="tooltip"
-                                                                data-placement="top" title="Delete"><i
-                                                                    class="fa-solid fa-trash"></i></a></span></td>
+                                                            </a></span></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -105,4 +112,12 @@
             </div>
         </div>
     </div>
+    @if (session('success'))
+        <input type="hidden" id="inputToastSuccess" value="{{ session('success') }}">
+    @endif
+    @if (session('error'))
+        <input type="hidden" id="inputToastError" value="{{ session('error') }}">
+    @endif
+
+    <script src="{{ asset('assetAdmin/js/a/delete.js') }}"></script>
 @endsection

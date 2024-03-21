@@ -1,8 +1,3 @@
-@php
-    $teacher_name = Session::get('teacher_name');
-    $teacher_avatar = Session::get('teacher_avatar');
-@endphp
-
 <!--*******************
         Preloader start
     ********************-->
@@ -66,8 +61,9 @@
                     <ul class="navbar-nav header-right">
                         <li class="nav-item dropdown header-profile">
                             @php
-                                if ($teacher_name !== null) {
-                                    echo $teacher_name;
+                                $admin_name = Auth::guard('admin')->user()->admin_name;
+                                if ($admin_name !== null) {
+                                    echo $admin_name;
                                 }
                             @endphp
                         </li>
@@ -135,7 +131,11 @@
                         </li>
                         <li class="nav-item dropdown header-profile">
                             <a class="nav-link" href="#" role="button" data-toggle="dropdown">
-                                <img src="{{ asset('images/' . ($teacher_avatar !== null ? $teacher_avatar : '')) }}" alt="">
+                                @php
+                                    $admin_avatar = Auth::guard('admin')->user()->admin_avatar;
+                                @endphp
+                                <img src="{{ asset('images/' . ($admin_avatar !== null ? $admin_avatar : '')) }}"
+                                    alt="">
                             </a>
                             <div class="dropdown-menu dropdown-menu-right">
                                 <a href="./app-profile.html" class="dropdown-item">
@@ -168,15 +168,43 @@
         <div class="quixnav-scroll">
             <ul class="metismenu" id="menu">
                 <li class="nav-label first">Main Menu</li>
-                <li><a href="{{ route('admin.dashboard') }}" aria-expanded="false"><i class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span></a>
+                <li><a href="{{ route('admin.dashboard') }}" aria-expanded="false"><i
+                            class="fa-solid fa-house"></i><span class="nav-text">Dashboard</span></a>
                     {{-- <ul aria-expanded="false">
                         <li><a href="./index.html">Dashboard 1</a></li>
                         <li><a href="./index2.html">Dashboard 2</a></li>
                     </ul> --}}
                 </li>
-                <li><a href="{{ route('admin.student.form') }}" aria-expanded="false"><i class="fa-solid fa-users"></i><span
-                    class="nav-text">Student</span></a></li>
 
+                <li><a href="{{ route('admin.student.form') }}" aria-expanded="false"><i
+                            class="fa-solid fa-users"></i><span class="nav-text">Student</span></a></li>
+                <li><a href="{{ route('admin.teacher.form') }}" aria-expanded="false"><i
+                            class="fa-solid fa-person-chalkboard"></i><span class="nav-text">Teacher</span></a></li>
+                <li><a href="{{ route('admin.semester.form') }}" aria-expanded="false"><i
+                            class="fa-solid fa-layer-group"></i><span class="nav-text">Semester</span></a></li>
+                <li><a href="{{ route('admin.faculty.form') }}" aria-expanded="false"><i
+                            class="fa-solid fa-building-columns"></i><span class="nav-text">Faculty</span></a></li>
+                <li><a href="{{ route('admin.major.form') }}" aria-expanded="false"><i
+                            class="fa-brands fa-studiovinari"></i><span class="nav-text">Major</span></a></li>
+                <li><a href="{{ route('admin.classroom.form') }}" aria-expanded="false"><i
+                            class="fa-solid fa-house-chimney-user"></i><span class="nav-text">Classroom</span></a>
+                </li>
+                <li><a href="{{ route('admin.class.form') }}" aria-expanded="false"><i
+                            class="fa-solid fa-people-roof"></i><span class="nav-text">Class</span></a></li>
+                <li><a href="{{ route('admin.subject.form') }}" aria-expanded="false"><i
+                            class="fa-solid fa-book"></i><span class="nav-text">Subject</span></a></li>
+
+
+                <li><a href="{{ route('admin.course.form') }}" aria-expanded="false"><i
+                            class="fa-brands fa-discourse"></i><span class="nav-text">Course</span></a></li>
+                @hasRole(['Admin', 'Write'])
+                    <li><a href="{{ route('admin.posts.form') }}" aria-expanded="false"><i
+                                class="fa-solid fa-feather"></i><span class="nav-text">Posts</span></a></li>
+                @endhasRole
+                @hasRole(['Admin'])
+                    <li><a href="{{ route('admin.permissions.form') }}" aria-expanded="false"> <i
+                                class="fa-solid fa-user-tie"></i><span class="nav-text"> Grant Permissions</span></a></li>
+                @endhasRole
                 <li class="nav-label">Apps</li>
                 <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
                             class="icon icon-app-store"></i><span class="nav-text">Apps</span></a>

@@ -23,8 +23,7 @@
                         <div class="card-body">
                             <div class="form-validation">
 
-                                <form class="form-valide" action="{{ route('admin.addStudent.submit') }}"
-                                    method="post">
+                                <form class="form-valide" action="{{ route('admin.addStudent.submit') }}" method="post">
                                     @csrf
                                     <div class="row">
                                         <div class="col-xl-7">
@@ -95,7 +94,8 @@
                                                         </div>
                                                         <div class="custom-file">
                                                             <input type="file" name="student_avatar"
-                                                                class="custom-file-input" id="avatarInput" accept=".jpg, .png">
+                                                                class="custom-file-input" id="avatarInput"
+                                                                accept=".jpg, .png">
                                                             <label class="custom-file-label"></label>
                                                         </div>
                                                     </div>
@@ -141,7 +141,7 @@
                                                     <select class="form-control" id="val-skill" name="class_id">
                                                         <option value=""></option>
                                                         @foreach ($class as $item)
-                                                            <option value="{{ $item->class_id }}">{{ $item->class_name }}
+                                                            <option value="{{ $item->class_id }}">{{ $item->class_name }}- {{ $item->course->course_name }}
                                                             </option>
                                                         @endforeach
                                                     </select>
@@ -184,4 +184,12 @@
             </div>
         </div>
     </div>
+    @if (session('success'))
+        <input type="hidden" id="inputToastSuccess" value="{{ session('success') }}">
+    @endif
+    @if (session('error'))
+        <input type="hidden" id="inputToastError" value="{{ session('error') }}">
+    @endif
+
+    <script src="{{ asset('assetAdmin/js/a/delete.js') }}"></script>
 @endsection

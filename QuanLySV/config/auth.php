@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'teacherAccount' => [
+            'driver' => 'session',
+            'provider' => 'teacherAccounts',
+        ],
         'admin' => [
             'driver' => 'session',
             'provider' => 'admins',
@@ -68,6 +72,10 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+        'teacherAccounts' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\TeacherAccount::class,
         ],
         'admins' => [
             'driver' => 'eloquent',
@@ -102,6 +110,12 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'admins' => [
+            'provider' => 'admins',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,

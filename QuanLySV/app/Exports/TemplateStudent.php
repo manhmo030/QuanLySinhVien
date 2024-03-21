@@ -14,7 +14,7 @@ class TemplateStudent implements FromCollection, WithTitle, WithHeadings
      */
     protected $title;
     protected $headings;
-    protected $selectedColumns = ['student_code', 'first_name', 'last_name', 'date_of_birth', 'gender', 'address', 'email', 'phone', 'student_avatar'];
+    protected $selectedColumns = ['student_code', 'first_name', 'last_name', 'date_of_birth', 'gender', 'address', 'email', 'phone', 'student_avatar', 'class_id'];
     public function __construct()
     {
         // Khởi tạo tiêu đề và các tiêu đề cột mặc định
@@ -28,7 +28,8 @@ class TemplateStudent implements FromCollection, WithTitle, WithHeadings
             'Address',
             'Email',
             'Phone',
-            'Avatar'
+            'Avatar',
+            'Class'
         ];
     }
     public function collection()

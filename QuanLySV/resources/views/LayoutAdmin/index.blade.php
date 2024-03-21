@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Focus - Bootstrap Admin Dashboard </title>
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assetAdmin/images/favicon.png') }}">
@@ -22,6 +23,8 @@
 
 <body>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    {{-- ckeditor --}}
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
 
     @include('LayoutAdmin.header')
 
@@ -37,6 +40,7 @@
     <!--**********************************
         Scripts
     ***********************************-->
+
     <!-- Required vendors -->
     <script src="{{ asset('assetAdmin/vendor/global/global.min.js') }}"></script>
     <script src="{{ asset('assetAdmin/js/quixnav-init.js') }}"></script>
@@ -69,6 +73,10 @@
     <script src="{{ asset('assetAdmin/js/plugins-init/datatables.init.js') }}"></script>
 
     <script src="{{ asset('assetAdmin/js/dashboard/dashboard-1.js') }}"></script>
+    {{-- sweet Alert --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    {{-- Toast --}}
+    <div id="toast__hong"></div>
 
 </body>
 

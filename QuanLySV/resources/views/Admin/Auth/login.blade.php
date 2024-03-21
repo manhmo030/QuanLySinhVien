@@ -26,7 +26,7 @@
                                         @csrf
                                         <div class="form-group">
                                             <label><strong>Email</strong></label>
-                                            <input type="email" name="email" class="form-control" required>
+                                            <input name="admin_email" class="form-control" required>
                                         </div>
                                         <div class="form-group">
                                             <label><strong>Password</strong></label>
