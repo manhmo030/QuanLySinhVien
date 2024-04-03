@@ -175,7 +175,20 @@
                         <li><a href="./index2.html">Dashboard 2</a></li>
                     </ul> --}}
                 </li>
+                <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                            class="fa-solid fa-chart-pie"></i><span class="nav-text">Char</span></a>
+                    <ul aria-expanded="false">
+                        <li><a href="{{ route('admin.chart.form') }}">Pie Chart</a></li>
 
+                    </ul>
+                </li>
+                <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                            class="icon icon-app-store"></i><span class="nav-text">Class Section</span></a>
+                    <ul aria-expanded="false">
+                        <li><a href="{{ route('admin.classSection.form') }}">Class Section</a></li>
+                        <li><a href="{{ route('admin.addClassSectionDate.form') }}">Add Date</a></li>
+                    </ul>
+                </li>
                 <li><a href="{{ route('admin.student.form') }}" aria-expanded="false"><i
                             class="fa-solid fa-users"></i><span class="nav-text">Student</span></a></li>
                 <li><a href="{{ route('admin.teacher.form') }}" aria-expanded="false"><i
@@ -206,20 +219,7 @@
                                 class="fa-solid fa-user-tie"></i><span class="nav-text"> Grant Permissions</span></a></li>
                 @endhasRole
                 <li class="nav-label">Apps</li>
-                <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                            class="icon icon-app-store"></i><span class="nav-text">Apps</span></a>
-                    <ul aria-expanded="false">
-                        <li><a href="./app-profile.html">Profile</a></li>
-                        <li><a class="has-arrow" href="javascript:void()" aria-expanded="false">Email</a>
-                            <ul aria-expanded="false">
-                                <li><a href="./email-compose.html">Compose</a></li>
-                                <li><a href="./email-inbox.html">Inbox</a></li>
-                                <li><a href="./email-read.html">Read</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="./app-calender.html">Calendar</a></li>
-                    </ul>
-                </li>
+
                 <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
                             class="icon icon-chart-bar-33"></i><span class="nav-text">Charts</span></a>
                     <ul aria-expanded="false">

@@ -14,11 +14,13 @@ class SemesterSubject extends Model
     public $timestamps = false;
     protected $fillable = ['semester_id', 'subject_id'];
 
-    public function semester(){
+    public function semester()
+    {
         return $this->belongsTo(Semester::class, 'semester_id', 'semester_id');
     }
 
-    public function subject(){
+    public function subject()
+    {
         return $this->belongsTo(Subject::class, 'subject_id', 'subject_id')->with('major');
     }
 }

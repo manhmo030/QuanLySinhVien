@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\ChartController;
 use App\Http\Controllers\Admin\ClassAdminController;
 use App\Http\Controllers\Admin\ClassroomAdminController;
+use App\Http\Controllers\Admin\ClassSectionAdminController;
 use App\Http\Controllers\Admin\CourseAdminController;
 use App\Http\Controllers\Admin\FacultyAdminController;
 use App\Http\Controllers\Admin\LoginAdminController;
@@ -13,6 +15,9 @@ use App\Http\Controllers\Admin\PostsAdminController;
 use App\Http\Controllers\Admin\SemesterAdminController;
 use App\Http\Controllers\Admin\SubjectAdminController;
 use App\Http\Controllers\Admin\SubjectAssignmentController;
+use App\Http\Controllers\Qldt\LoginController;
+use App\Http\Controllers\Qldt\PostController;
+use App\Http\Controllers\Qldt\StudyRegisterController;
 use App\Http\Middleware\AccessPermission;
 use Illuminate\Support\Facades\Route;
 
@@ -30,7 +35,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('Error.404');
 })->name('Error.404');
+
 Route::prefix('admin')->group(function () {
+    Route::get('char', [ChartController::class, 'form'])->name('admin.chart.form');
+    Route::get('pie-char/{id}', [ChartController::class, 'pieChart']);
     Route::prefix('auth')->group(function () {
         Route::get('/login', [LoginAdminController::class, 'formLogin'])->name('admin.login.form');
         Route::post('/login', [LoginAdminController::class, 'login'])->name('admin.login.submit');
@@ -130,7 +138,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/update-course/{course_id}', [CourseAdminController::class, 'updateCourse'])->name('admin.updateCourse.submit');
         Route::post('/delete-course', [CourseAdminController::class, 'deleteCourse']);
     });
-    Route::prefix('semester')->group(function(){
+    Route::prefix('semester')->group(function () {
         Route::get('/', [SemesterAdminController::class, 'formSemester'])->name('admin.semester.form');
         Route::get('/list-semster-subject/{semester_id}', [SemesterAdminController::class, 'listSubjectInSemester'])->name('admin.listSemesterSubject.form');
         //Route::get('/search-semester', [SemesterAdminController::class, 'searchSemester'])->name('admin.searchSemester.submit');
@@ -146,7 +154,27 @@ Route::prefix('admin')->group(function () {
             Route::get('/update-semester-subject/{semester_subject_id}', [SemesterAdminController::class, 'formUpdateSemesterSubject'])->name('admin.updateSemesterSubject.form');
             Route::post('/update-semester-subject/{semester_subject_id}', [SemesterAdminController::class, 'updateSemesterSubject'])->name('admin.updateSemesterSubject.submit');
             Route::post('/delete-semester-subject', [SemesterAdminController::class, 'deleteSemesterSubject']);
-
+        });
+    });
+    Route::prefix('class-section')->group(function () {
+        Route::get('/', [ClassSectionAdminController::class, 'form'])->name('admin.classSection.form');
+        Route::get('/schedule/{start_end_date_id}', [ClassSectionAdminController::class, 'formSchedule'])->name('admin.classSectionSchedule.form');
+        Route::get('/search', [ClassSectionAdminController::class, 'search'])->name('admin.searchClassSection.submit');
+        Route::middleware(AccessPermission::class . ':Admin,Editor')->group(function () {
+            Route::get('/add', [ClassSectionAdminController::class, 'formAdd'])->name('admin.addClassSection.form');
+            Route::post('/add', [ClassSectionAdminController::class, 'add'])->name('admin.addClassSection.submit');
+            Route::post('/update/{class_section_id}', [ClassSectionAdminController::class, 'update'])->name('admin.updateClassSection.submit');
+            Route::post('/delete', [ClassSectionAdminController::class, 'delete']);
+            Route::get('/add-date', [ClassSectionAdminController::class, 'formAddDate'])->name('admin.addClassSectionDate.form');
+            Route::post('/add-date', [ClassSectionAdminController::class, 'addDate'])->name('admin.addClassSectionDate.submit');
+            Route::get('/add-schedule/{start_end_date_id}', [ClassSectionAdminController::class, 'formAddSchedule'])->name('admin.addClassSectionSchedule.form');
+            Route::post('/add-schedule{start_end_date_id}', [ClassSectionAdminController::class, 'addSchedule'])->name('admin.addClassSectionSchedule.submit');
+            Route::get('/update-schedule/{schedule_id}', [ClassSectionAdminController::class, 'formupdateSchedule'])->name('admin.updateSchedule.form');
+            Route::post('/update-schedule/{schedule_id}', [ClassSectionAdminController::class, 'updateSchedule'])->name('admin.updateSchedule.submit');
+            Route::post('/delete-schedule', [ClassSectionAdminController::class, 'deleteSchdule']);
+            Route::get('/update-sed/{start_end_date_id}', [ClassSectionAdminController::class, 'formupdateSed'])->name('admin.updateSed.form');
+            Route::post('/update-sed/{start_end_date_id}', [ClassSectionAdminController::class, 'updateSed'])->name('admin.updateSed.submit');
+            Route::post('/delete-sed/{start_end_date_id}', [ClassSectionAdminController::class, 'deleteSed'])->name('admin.deleteSed.submit');
         });
     });
     Route::middleware(AccessPermission::class . ':Admin,Editor')->prefix('posts')->group(function () {
@@ -166,4 +194,15 @@ Route::prefix('admin')->group(function () {
         Route::post('/delete-admin', [PermissionsAdminController::class, 'deleteAdmin']);
         Route::get('/search-admin', [PermissionsAdminController::class, 'searchAdmin'])->name('admin.searchAdmin.submit');
     });
+});
+
+Route::prefix('qldt')->group(function () {
+    Route::get('', [LoginController::class, 'form'])->name('user.login.form');
+    Route::post('', [LoginController::class, 'login'])->name('user.login.submit');
+    Route::get('/logout', [LoginController::class, 'logout'])->name('user.logout.submit');
+    Route::get('post', [PostController::class, 'form'])->name('user.post.form');
+    Route::get('post-detail/{id}', [PostController::class, 'postDetail'])->name('user.postDetail.form');
+    Route::get('/study-register', [StudyRegisterController::class, 'form'])->name('user.studyRegister.form');
+    Route::post('/show-class', [StudyRegisterController::class, 'listClass'])->name('user.listClass.submit');
+    Route::post('/study-register', [StudyRegisterController::class, 'dangKy'])->name('user.studyRegister.submit');
 });

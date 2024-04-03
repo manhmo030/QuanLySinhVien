@@ -54,8 +54,6 @@
                                             <tr class="tr-color">
                                                 <th>#</th>
                                                 <th>Semester</th>
-                                                <th>Course</th>
-                                                <th>Term</th>
                                                 <th>Open</th>
                                                 <th>Action</th>
                                             </tr>
@@ -73,9 +71,9 @@
                                                     <td><input class="semester-checked" type="checkbox"
                                                             name="semesterChecked[]" value="{{ $item->semester_id }}">
                                                     </td>
-                                                    <td>{{ $item->semester_name }}_{{ $item->school_year }}</td>
-                                                    <td>{{ $item->course->course_name }}</td>
-                                                    <td>{{ $item->term }}</td>
+                                                    <td>{{ $item->semester_name }}</td>
+
+
                                                     <td>
                                                         <form id="IsOpenForRegistration-{{ $item->semester_id }}"
                                                             action="{{ route('admin.updateSemesterCheckbox.submit', ['semester_id' => $item->semester_id]) }}"
@@ -84,8 +82,7 @@
                                                             <input type="checkbox" name="checked" class="checkOpenSemester"
                                                                 data-open-semester="{{ $item->semester_id }}"
                                                                 {{ $item->IsOpenForRegistration != 0 ? 'checked' : '' }}>
-                                                            <input type="hidden" name="course_id"
-                                                                value="{{ $item->course->course_id }}">
+
                                                         </form>
                                                     </td>
                                                     <td><span><a style="display: none"

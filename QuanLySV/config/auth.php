@@ -40,13 +40,14 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'teacherAccount' => [
-            'driver' => 'session',
-            'provider' => 'teacherAccounts',
-        ],
+
         'admin' => [
             'driver' => 'session',
             'provider' => 'admins',
+        ],
+        'user' => [
+            'driver' => 'session',
+            'provider' => 'users',
         ],
 
     ],
@@ -73,15 +74,15 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-        'teacherAccounts' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\TeacherAccount::class,
-        ],
+
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
-
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\StudentAccount::class,
+        ],
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',

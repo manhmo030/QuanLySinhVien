@@ -5,14 +5,14 @@
             <div class="row page-titles mx-0">
                 <div class="col-sm-6 p-md-0">
                     <div class="welcome-text">
-                        <h4>Add Subject_Semester</h4>
+                        <h4>Add Start date - End date</h4>
 
                     </div>
                 </div>
                 <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.semester.form') }}">Subject in Semester</a></li>
-                        <li class="breadcrumb-item active"><a>Add Subject</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.classSection.form') }}">Class Section</a></li>
+                        <li class="breadcrumb-item active"><a>Add Start date - End date</a></li>
                     </ol>
                 </div>
             </div>
@@ -23,7 +23,7 @@
                         <div class="card-body">
                             <div class="form-validation">
 
-                                <form class="form-valide" action="{{ route('admin.addSemesterSubject.submit') }}"
+                                <form class="form-valide" action="{{ route('admin.addClassSectionDate.submit') }}"
                                     method="post">
                                     @csrf
                                     <div class="row">
@@ -31,38 +31,43 @@
                                         </div>
                                         <div class="col-xl-8">
                                             <div class="form-group row">
-                                                <label class="col-lg-3 col-form-label" for="val-skill">Semester
+                                                <label class="col-lg-3 col-form-label" for="val-skill">Class Section
                                                     <span class="text-danger">*</span>
                                                 </label>
                                                 <div class="col-lg-9">
-                                                    <select class="form-control" id="val-skill" name="semester_id">
+                                                    <select class="form-control" id="val-skill" name="class_section_id">
                                                         <option value=""></option>
-                                                        @foreach ($semester as $item)
-                                                            <option value="{{ $item->semester_id }}">
-                                                                {{ $item->semester_name }}
+                                                        @foreach ($classSection as $item)
+                                                            <option value="{{ $item->class_section_id }}">
+                                                                {{ $item->class_section_name }} ({{ $item->class_section_code }})
                                                             </option>
                                                         @endforeach
                                                     </select>
-                                                    @if ($errors->has('semester_id'))
-                                                        <p class="error-message">{{ $errors->first('semester_id') }}</p>
+                                                    @if ($errors->has('class_section_id'))
+                                                        <p class="error-message">{{ $errors->first('class_section_id') }}
+                                                        </p>
                                                     @endif
                                                 </div>
                                             </div>
                                             <div class="form-group row">
-                                                <label class="col-lg-3 col-form-label" for="val-skill">Subject
+                                                <label class="col-lg-3 col-form-label" for="val-currency">Start Date
                                                     <span class="text-danger">*</span>
                                                 </label>
                                                 <div class="col-lg-9">
-                                                    <select class="form-control" id="val-skill" name="subject_id">
-                                                        <option value=""></option>
-                                                        @foreach ($subject as $item)
-                                                            <option value="{{ $item->subject_id }}">
-                                                                {{ $item->subject_name }} ({{ $item->subject_code }})
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    @if ($errors->has('subject_id'))
-                                                        <p class="error-message">{{ $errors->first('subject_id') }}</p>
+                                                    <input type="date" class="form-control" name="start_date">
+                                                    @if ($errors->has('start_date'))
+                                                        <p class="error-message">{{ $errors->first('start_date') }}</p>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label" for="val-currency">End Date
+                                                    <span class="text-danger">*</span>
+                                                </label>
+                                                <div class="col-lg-9">
+                                                    <input type="date" class="form-control" name="end_date">
+                                                    @if ($errors->has('end_date'))
+                                                        <p class="error-message">{{ $errors->first('end_date') }}</p>
                                                     @endif
                                                 </div>
                                             </div>

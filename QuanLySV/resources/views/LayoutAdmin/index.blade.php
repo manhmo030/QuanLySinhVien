@@ -22,6 +22,9 @@
 </head>
 
 <body>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     {{-- ckeditor --}}
     <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
@@ -32,7 +35,7 @@
 
     @include('LayoutAdmin.footer')
 
-    </div>
+
     <!--**********************************
         Main wrapper end
     ***********************************-->

@@ -3,7 +3,6 @@
 namespace App\Imports;
 
 use App\Models\Teacher;
-use App\Models\TeacherAccount;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 
@@ -28,13 +27,7 @@ class TeachersImport implements ToModel, WithStartRow
             'teacher_title'=> $row[8],
             'teacher_avatar'=> $row[9]
         ]);
-        if ($teachers) {
-            TeacherAccount::create([
-                'email' => $row[0],
-                'password' => '1',
-                'teacher_id' => $teachers->teacher_id
-            ]);
-        }
+
         return null;
     }
 

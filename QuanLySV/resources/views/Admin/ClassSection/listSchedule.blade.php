@@ -9,44 +9,46 @@
             <div class="row page-titles mx-0">
                 <div class="col-sm-6 p-md-0">
                     <div class="welcome-text">
-                        <h4>Teacher List</h4>
+                        <h4>Schedule List</h4>
 
                     </div>
                 </div>
                 <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.teacher.form') }}">Teacher</a></li>
-                        <li class="breadcrumb-item active"><a>Teacher List</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.classSection.form') }}">Class Section</a></li>
+                        <li class="breadcrumb-item active"><a>Schedule List</a></li>
                     </ol>
                 </div>
             </div>
 
             <div class="row">
+
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header card-margin">
                             <div>
                                 @hasRole(['Admin', 'Editor'])
-                                    <a href="{{ route('admin.addTeacher.form') }}"><Span class="btn btn-primary">
-                                            <i class="fa-solid fa-user-plus"></i> Add Teacher</Span></a>
-                                    <a href="{{ route('admin.importTeachers.form') }}"><Span class="btn btn-primary">
-                                            <i class="fa-solid fa-file-import"></i> Import</Span></a>
-                                    <a href="{{ route('admin.exportTeacher.submit') }}"><Span class="btn btn-primary">
-                                            <i class="fa-solid fa-file-export"></i> Export</Span></a>
-                                    <a style="display: none" id="delete-teacher-btn"><Span class="btn btn-primary">
+                                    <a href="{{ route('admin.addClassSectionSchedule.form', ['start_end_date_id' => $sed->start_end_date_id]) }}"><Span class="btn btn-primary">
+                                            <i class="fa-solid fa-user-plus"></i> Add Schedule</Span></a>
+
+                                    <a style="display: none" id="delete-schedule-btn"><Span class="btn btn-primary">
                                             <i class="fa-solid fa-trash-can"></i> Delete</Span></a>
                                 @endhasRole
                             </div>
 
                             <div>
-                                <form action="{{ route('admin.searchTeacher.submit') }}" method="GET">
+                                {{-- <form action="{{ route('admin.searchClass.submit') }}" method="GET">
                                     <button type="submit" class="btn btn-primary">Search <i
                                             class="fa-solid fa-magnifying-glass"></i></button>
                                     <input type="text" name="keyword" class="search-input" aria-controls="example">
-                                </form>
+                                </form> --}}
                             </div>
                         </div>
-
+                        <div class="text-center m-3" style="color: black; font-weight:bold; font-size: 18px">
+                            {{ $sed->classSection->semesterSubject->subject->subject_name }} ({{ $sed->classSection->class_section_code }})
+                            {{ $sed->start_date }}/{{ $sed->end_date }}
+                            <a href="{{ route('admin.updateSed.form', ['start_end_date_id'=>$sed->start_end_date_id]) }}" class="ml-3 "><i class="fa-solid fa-wrench"></i></a>
+                        </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <div id="example_wrapper" class="dataTables_wrapper">
@@ -55,42 +57,31 @@
                                         <thead>
                                             <tr class="tr-color">
                                                 <th>#</th>
-                                                <th>Code</th>
-                                                <th>Name</th>
-                                                <th>Email</th>
-                                                <th>Phone</th>
-                                                <th>Address</th>
-                                                <th>DOB</th>
-                                                <th>Gender</th>
-                                                <th>Faculty</th>
-                                                <th>Title</th>
-                                                <th>Avatar</th>
+                                                <th>Day</th>
+                                                <th>Perio</th>
+                                                <th>Classroom</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
 
                                         <tbody>
-                                            @foreach ($teachers as $teacher)
+                                            @foreach ($schedule as $item)
                                                 @php
                                                     $i++;
                                                 @endphp
-                                                <tr id="studentValue-{{ $teacher->teacher_id }}"
+                                                <tr id="scheduleValue-{{ $item->schedule_id }}"
                                                     class="green-hover
                                                     @if ($i % 2 == 0) tr-background @endif ">
-                                                    <td><input class="teacher-checked" type="checkbox"
-                                                            name="teachersChecked[]" value="{{ $teacher->teacher_id }}">
+                                                    <td><input class="schedule-checked" type="checkbox"
+                                                            name="scheduleChecked[]"
+                                                            value="{{ $item->schedule_id }}">
                                                     </td>
-                                                    <td>{{ $teacher->teacher_code }}</td>
-                                                    <td>{{ $teacher->teacher_name }}</td>
-                                                    <td>{{ $teacher->teacher_email }}</td>
-                                                    <td>{{ $teacher->teacher_phone }}</td>
-                                                    <td>{{ $teacher->teacher_address }}</td>
-                                                    <td>{{ $teacher->teacher_date_of_birth }}</td>
-                                                    <td>{{ $teacher->teacher_gender }}</td>
-                                                    <td>{{ $teacher->faculty->faculty_name }}</td>
-                                                    <td>{{ $teacher->teacher_title }}</td>
-                                                    <td>{{ $teacher->teacher_avatar }}</td>
-                                                    <td><span><a href="{{ route('admin.updateTeacher.form', ['teacher_id' => $teacher->teacher_id]) }}"
+                                                    <td>{{ $item->schedule_day }}</td>
+                                                    <td>{{ $item->schedule_time }}</td>
+
+
+                                                    <td>{{ $item->classroom->room_name }}</td>
+                                                    <td><span><a href="{{ route('admin.updateSchedule.form', ['schedule_id' => $item->schedule_id]) }}"
                                                                 class="mr-4" data-toggle="tooltip" data-placement="top"
                                                                 title="Edit"><i class="fa-solid fa-pen-to-square"></i>
                                                             </a></span></td>
@@ -98,9 +89,9 @@
                                             @endforeach
                                         </tbody>
                                     </table>
-                                    <div>
-                                        {{ $teachers->links() }}
-                                    </div>
+                                    {{-- <div>
+                                        {{ $classSection->links() }}
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>

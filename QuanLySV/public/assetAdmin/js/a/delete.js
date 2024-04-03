@@ -1,6 +1,23 @@
 $(document).ready(function () {
     toastSuccessOnLoad();
     toastErrorOnLoad();
+    updateClassSection();
+    //Start_end_date
+    $('#deleteSed-btn').click(function () {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this data!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Xử lý khi người dùng đồng ý
+                $('#deleteSed').submit();
+            }
+        });
+    });
     //student
     $('.student-checked').change(function () {
         if ($('.student-checked:checked').length > 0) {
@@ -44,6 +61,7 @@ $(document).ready(function () {
             if (result.isConfirmed) {
                 // Xử lý khi người dùng đồng ý
                 deleteTeacher();
+
             }
         });
     });
@@ -256,6 +274,54 @@ $(document).ready(function () {
             }
         });
     });
+    //class-section
+    $('.class-section-checked').change(function () {
+        if ($('.class-section-checked:checked').length > 0) {
+            $('#delete-class-section-btn').show(); // Hiển thị nút button khi có ít nhất một checkbox được chọn
+        } else {
+
+            $('#delete-class-section-btn').hide(); // Ẩn nút button khi không có checkbox được chọn
+        }
+    });
+    $('#delete-class-section-btn').click(function () {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this data!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Xử lý khi người dùng đồng ý
+                deleteClassSection();
+            }
+        });
+    });
+    //schedule
+    $('.schedule-checked').change(function () {
+        if ($('.schedule-checked:checked').length > 0) {
+            $('#delete-schedule-btn').show(); // Hiển thị nút button khi có ít nhất một checkbox được chọn
+        } else {
+
+            $('#delete-schedule-btn').hide(); // Ẩn nút button khi không có checkbox được chọn
+        }
+    });
+    $('#delete-schedule-btn').click(function () {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this data!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Xử lý khi người dùng đồng ý
+                deleteSchedule();
+            }
+        });
+    });
     //admin
     $('.admin-checked').change(function () {
         if ($('.admin-checked:checked').length > 0) {
@@ -280,6 +346,35 @@ $(document).ready(function () {
         });
     });
 });
+function deleteSchedule() {  //xóa sinh viên ajax
+    var selectedItems = $("input[name='scheduleChecked[]']:checked").map(function () {
+        return $(this).val();
+    }).get();
+
+    $.ajax({
+        method: 'POST',
+        url: '/admin/class-section/delete-schedule',
+        data: {
+            selected_items: selectedItems,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (response) {
+            if (response.success) {
+                $('#toast__hong').html(toastSuccess(response.success));
+                // Xóa hàng dữ liệu tương ứng khi xóa thành công
+                for (var i = 0; i < selectedItems.length; i++) {
+                    $("#scheduleValue-" + selectedItems[i]).remove();
+                }
+            } else {
+                $('#toast__hong').html(toastError(response.error));
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            // Xử lý lỗi nếu yêu cầu Ajax không thành công bound data
+            $('#toast__hong').html(toastError('Cannot delete schedule a foreign key constraint fails'));
+        }
+    });
+}
 
 function deleteStudent() {  //xóa sinh viên ajax
     var selectedItems = $("input[name='studentsChecked[]']:checked").map(function () {
@@ -631,7 +726,64 @@ function deleteSemesterSubject() {
         }
     });
 }
+function deleteClassSection() {
+    var selectedItems = $("input[name='classSectionChecked[]']:checked").map(function () {
+        return $(this).val();
+    }).get();
 
+    $.ajax({
+        method: 'POST',
+        url: '/admin/class-section/delete',
+        data: {
+            selected_items: selectedItems,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (response) {
+            if (response.success) {
+                $('#toast__hong').html(toastSuccess(response.success));
+                // Xóa hàng dữ liệu tương ứng khi xóa thành công
+                for (var i = 0; i < selectedItems.length; i++) {
+                    $("#classSectionValue-" + selectedItems[i]).remove();
+                }
+            } else {
+                $('#toast__hong').html(toastError(response.error));
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            // Xử lý lỗi nếu yêu cầu Ajax không thành công bound data
+            $('#toast__hong').html(toastError('Cannot delete Class Section a foreign key constraint fails'));
+        }
+    });
+}
+function updateClassSection(){
+    $(".editable").on("blur", function () {
+        var classSectionId = $(this).data('class-section-id');
+        var capacityValue = $(this).text().trim();
+
+        $.ajax({
+            type: 'POST',
+            url: "/admin/class-section/update/" + classSectionId,
+            data: {
+                capacity_value: capacityValue,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.success) {
+                    $('#toast__hong').html(toastSuccess(response.success));
+                } else {
+                    $('#toast__hong').html(toastError(response.error));
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // Xử lý lỗi nếu yêu cầu Ajax không thành công bound data
+                location.reload();
+                $('#toast__hong').html(toastError('Cannot be left blank & must be of type int'));
+
+            }
+        });
+    });
+
+}
 function toastSuccessOnLoad() {
     var inputToast = document.getElementById('inputToastSuccess');
     if (inputToast) { //Nếu tồn tại thì lấy value

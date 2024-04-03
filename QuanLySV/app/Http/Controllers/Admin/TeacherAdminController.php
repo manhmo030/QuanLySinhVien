@@ -8,9 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Imports\TeachersImport;
 use App\Models\Faculty;
 use App\Models\Teacher;
-use App\Models\TeacherAccount;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -18,8 +16,9 @@ class TeacherAdminController extends Controller
 {
     public function formTeacher()
     {
-        $teachers = Teacher::join('tbl_faculty', 'tbl_faculty.faculty_id', '=', 'tbl_teacher.faculty_id')
-            ->orderBy('teacher_id', 'DESC')->paginate(10);
+        $teachers = Teacher::with('faculty')
+            ->orderBy('teacher_id', 'DESC')
+            ->paginate(10);
         return view('Admin.Teacher.listTeacher', compact('teachers'));
     }
 
@@ -148,14 +147,10 @@ class TeacherAdminController extends Controller
     {
         if ($request->has('selected_items')) {
             $selectedItems = $request->selected_items;
-            DB::beginTransaction();
-            TeacherAccount::whereIn('teacher_id', $selectedItems)->delete();
             $deleteTeacher = Teacher::whereIn('teacher_id', $selectedItems)->delete();
             if ($deleteTeacher) {
-                DB::commit();
                 return response()->json(['success' => 'Teacher deleted successfully'], 200);
             } else {
-                DB::rollback();
                 return response()->json(['error' => 'Failed to delete teachers'], 500);
             }
         }

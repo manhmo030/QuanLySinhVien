@@ -12,12 +12,7 @@ class Semester extends Model
     protected $table = 'tbl_semester';
     protected $primaryKey = 'semester_id';
     public $timestamps = false;
-    protected $fillable = ['semester_name', 'school_year', 'course_id', 'term', 'IsOpenForRegistration'];
-
-    public function course()
-    {
-        return $this->hasOne(Course::class, 'course_id', 'course_id');
-    }
+    protected $fillable = ['semester_name', 'IsOpenForRegistration'];
 
     public function subject()
     {

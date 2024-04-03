@@ -56,22 +56,7 @@
                                                     @endif
                                                 </div>
                                             </div>
-                                            <div class="form-group row">
-                                                <label class="col-lg-3 col-form-label" for="val-skill">Course
-                                                    <span class="text-danger">*</span>
-                                                </label>
-                                                <div class="col-lg-9">
-                                                    <select class="form-control" id="val-skill" name="course_id">
-                                                        <option></option>
-                                                        @foreach ($course as $item)
-                                                            <option value="{{ $item->course_id }}">{{ $item->course_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    @if ($errors->has('course_id'))
-                                                        <p class="error-message">{{ $errors->first('course_id') }}</p>
-                                                    @endif
-                                                </div>
-                                            </div>
+
                                             <div class="form-group row">
                                                 <label class="col-lg-3 col-form-label" for="val-username"> Term
                                                     <span class="text-danger">*</span>
