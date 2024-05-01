@@ -66,9 +66,9 @@
                                         <td colspan="2" class=""><span class="labelHeader"><span
                                                     id="lableDailyRgsDuration">Hạn đăng ký : </span></span>
 
-                                            <span id="lblStartHourTitle" class="labelContent">9h, </span>
-                                            <span id="lblDuration" class="labelContent">21/02/2024 -&gt;
-                                                21/2/2024</span>
+                                            <span id="lblStartHourTitle" class="labelContent">{{ $code->time }}, </span>
+                                            <span id="lblDuration" class="labelContent">{{ $code->start_date }} -&gt;
+                                                {{ $code->end_date }}</span>
 
 
                                         </td>
@@ -258,7 +258,8 @@
                                             $i = 1;
                                         @endphp
                                         @if (session()->has('listClass') && ($listClass = session('listClass')))
-                                            <form id="formdangky" action="{{ route('user.studyRegister.submit') }}" method="POST">
+                                            <form id="formdangky" action="{{ route('user.studyRegister.submit') }}"
+                                                method="POST">
                                                 @csrf
                                                 @foreach ($listClass as $item)
                                                     <tr class="cssRangeItem3" style="height:20px;">
@@ -268,7 +269,8 @@
                                                         @endphp</td>
                                                         <td align="center">
                                                             <input type="radio" id="rdiSelect" name="radiodangky"
-                                                                value="{{ $item->class_section_id }}" cursorshover="true">
+                                                                value="{{ $item->class_section_id }}"
+                                                                cursorshover="true">
                                                             <br>
                                                         </td>
                                                         <td style="font-weight:bold;">
@@ -290,6 +292,7 @@
                                                                             {{ $schedule->schedule_time }} |
                                                                             {{ $schedule->classroom->room_name }}-{{ $schedule->classroom->building_name }}</b>
                                                                     @endforeach
+                                                                    <br>
                                                                 </span>
                                                             @endforeach
                                                         </td>
@@ -297,6 +300,73 @@
                                                         <td align="center">
                                                             <span
                                                                 id="gridRegistered_lblExpectationStudent_0">{{ $item->class_section_capacity }}</span>
+
+                                                        </td>
+                                                        <td align="center">
+                                                            @if (session()->has('registrationNumbers') && ($registrationNumbers = session('registrationNumbers')))
+                                                                <span
+                                                                    id="gridRegistered_lblCurrentStudent_0">{{ $registrationNumbers[$item->class_section_id] }}</span>
+                                                            @endif
+                                                        </td>
+                                                        <td align="center">
+                                                            <span
+                                                                id="gridRegistered_lblCourseCredit_0">{{ $item->semesterSubject->subject->subject_credit }}</span>
+
+                                                        </td>
+
+                                                    </tr>
+                                                @endforeach
+                                            </form>
+                                        @endif
+
+                                        @if (session()->has('changeClassSection') && ($changeClassSection = session('changeClassSection')))
+                                            <form id="formdoilop" action="{{ route('user.updateChangeClass.submit') }}"
+                                                method="POST">
+                                                @csrf
+                                                @foreach ($changeClassSection as $item)
+                                                    <tr class="cssRangeItem3" style="height:20px;">
+                                                        <td align="center">@php
+                                                            echo $i;
+                                                            $i++;
+                                                        @endphp</td>
+                                                        @if (session()->has('class_section_id') && ($class_section_id = session('class_section_id')))
+                                                            <input type="hidden" name="class_section_id_old"
+                                                                value="{{ $class_section_id }}">
+                                                        @endif
+                                                        <td align="center">
+                                                            <input type="radio" id="rdiSelect" name="radiodangky"
+                                                                value="{{ $item->class_section_id }}"
+                                                                cursorshover="true">
+                                                            <br>
+                                                        </td>
+                                                        <td style="font-weight:bold;">
+                                                            <span
+                                                                id="gridRegistered_lblCourseClass_0">{{ $item->class_section_name }}({{ $item->class_section_code }})</span>
+                                                        </td>
+                                                        <td>
+                                                            <span
+                                                                id="gridRegistered_lblCourseCode_0">{{ $item->semesterSubject->subject->subject_code }}</span>
+                                                        </td>
+                                                        <td>
+                                                            @foreach ($item->startEndDate as $startEndDate)
+                                                                <span id="gridRegistered_lblLongTime_0">Từ
+                                                                    {{ $startEndDate->start_date }} đến
+                                                                    {{ $startEndDate->end_date }}:
+                                                                    @foreach ($startEndDate->schedule as $schedule)
+                                                                        <br>&nbsp;&nbsp;&nbsp;
+                                                                        <b>Thứ {{ $schedule->schedule_day }} tiết
+                                                                            {{ $schedule->schedule_time }} |
+                                                                            {{ $schedule->classroom->room_name }}-{{ $schedule->classroom->building_name }}</b>
+                                                                    @endforeach
+                                                                    <br>
+                                                                </span>
+                                                            @endforeach
+                                                        </td>
+
+                                                        <td align="center">
+                                                            <span
+                                                                id="gridRegistered_lblExpectationStudent_0">{{ $item->class_section_capacity }}</span>
+
                                                         </td>
                                                         <td align="center">
                                                             @if (session()->has('registrationNumbers') && ($registrationNumbers = session('registrationNumbers')))
@@ -331,24 +401,14 @@
                             <a onclick="ShowOtherTermRgs(1);return false;" id="lnkViewOtherTermRgs"
                                 href="javascript:__doPostBack('lnkViewOtherTermRgs','')">Hiển thị các lớp đã đăng ký đợt
                                 trước</a>
-
-
                             <input name="hidFieldId" type="hidden" id="hidFieldId" style="WIDTH: 28px; HEIGHT: 19px"
                                 size="1" value="36E0D94B3AE842FEB692AC231A7C434A">
-
                             <input name="hidSemester" type="hidden" id="hidSemester" style="WIDTH: 28px; HEIGHT: 19px"
                                 size="1" value="2023_2024_2">
-
-
-
-
                             <input name="hidTerm" type="hidden" id="hidTerm" style="WIDTH: 28px; HEIGHT: 19px"
                                 size="1" value="2">
-
                             <input name="hidCourseId" type="hidden" id="hidCourseId" style="WIDTH: 28px; HEIGHT: 19px"
                                 size="1">
-
-
                             <input name="hidMultiStudyType" type="hidden" id="hidMultiStudyType"
                                 style="WIDTH: 28px; HEIGHT: 19px" size="1">
                             <input name="hidMaxPeriod" type="hidden" id="hidMaxPeriod"
@@ -361,6 +421,8 @@
                                 rồi nhấn nút "Ðăng ký", xem kết quả bên dưới) </span>
                             &nbsp;
                             &nbsp;
+                            <input id="btnUpgradeMark" type="button" value="Đổi lớp" onclick="formdoilop();"
+                                style="font-weight: bold; display: inline; visibility: visible;">
                             <input id="btnUpgradeMark" type="button" value="Đăng ký" onclick="formdangky();"
                                 style="font-weight: bold; display: inline; visibility: visible;">
                         </td>
@@ -389,7 +451,7 @@
                                             <td class="cssListHeader" align="center"
                                                 style="color:White;font-weight:bold;height:20px;width:5%;">Hủy</td>
                                             <td class="cssListHeader" align="center"
-                                                style="color:White;font-weight:bold;height:20px;width:18%;">
+                                                style="color:White;font-weight:bold;height:20px;width:27%;">
                                                 <label><b cursorshover="true">Lớp học phần</b></label>
                                             </td>
                                             <td class="cssListHeader" align="center"
@@ -400,10 +462,7 @@
                                                 style="color:White;font-weight:bold;height:20px;">
                                                 <label><b cursorshover="true">Thời gian</b></label>
                                             </td>
-                                            <td class="cssListHeader"
-                                                style="color:White;font-weight:bold;height:20px;width:10%;">
-                                                <label><b cursorshover="true">Ðịa điểm</b></label>
-                                            </td>
+
                                             <td class="cssListHeader" align="center"
                                                 style="color:White;font-weight:bold;height:20px;width:6%;">
                                                 <label><b cursorshover="true">Sĩ số</b></label>
@@ -416,126 +475,63 @@
                                                 style="color:White;font-weight:bold;height:20px;width:5%;">
                                                 <label><b>Số TC</b></label>
                                             </td>
-                                            <td class="cssListHeader" align="center"
-                                                style="color:White;font-weight:bold;height:20px;width:7%;">
-                                                <label><b>Học phí</b></label>
-                                            </td>
-                                            <td class="cssListHeader" align="center"
-                                                style="color:White;font-weight:bold;height:20px;">
-                                                <label><b>G.chú</b></label>
-                                            </td>
+
                                         </tr>
-                                        <tr class="cssRangeItem3" style="height:20px;">
-                                            <td align="center">1</td>
-                                            <td align="center">
-                                                <input id="gridRegistered_chkDelete_0" type="checkbox"
-                                                    name="gridRegistered$ctl02$chkDelete"
-                                                    onclick="CancelCourseClass(this);">
+                                    </tbody>
+                                    <tbody id="creditTable">
+                                        @if (isset($enrollmentDetail))
+                                            @foreach ($enrollmentDetail as $item)
+                                                <tr class="cssRangeItem3" style="height:20px;">
+                                                    <td align="center">1</td>
+                                                    <td align="center">
+                                                        <input id="gridRegistered_chkDelete_0" type="checkbox"
+                                                            name="gridRegistered$ctl02$chkDelete">
 
-
-
-
-                                                <input type="hidden" id="hidRgsCourseId"
-                                                    value="D56C6B82F85840EB8B63044C7C20C337">
-
-
-
-                                                <br>
-                                                <a id="gridRegistered_lnkDoiLop_0"
-                                                    href="javascript:__doPostBack('gridRegistered$ctl02$lnkDoiLop','')"
-                                                    style="font-weight:bold;">Đổi lớp</a>
-                                            </td>
-                                            <td style="font-weight:bold;">
-                                                <span id="gridRegistered_lblCourseClass_0">Tiếng anh chuyên
-                                                    ngành-2-2-23(N05)</span>
-                                            </td>
-                                            <td>
-                                                <span id="gridRegistered_lblCourseCode_0">ANHCNTT.3</span>
-                                            </td>
-                                            <td>
-                                                <span id="gridRegistered_lblLongTime_0">Từ 04/03/2024 đến
-                                                    31/03/2024:<br>&nbsp;&nbsp;&nbsp;<b>Thứ 2 tiết 13,14,15,16
-                                                        (LT)</b><br>&nbsp;&nbsp;&nbsp;<b>Thứ 6 tiết 13,14,15,16
-                                                        (LT)</b><br></span>
-
-                                            </td>
-                                            <td>
-                                                <span id="gridRegistered_lblLocation_0">[T2] Phòng trực tuyến Phòng trực
-                                                    tuyến<br>[T6] 506-A3 Giảng đường A3</span>
-                                            </td>
-                                            <td align="center">
-                                                <span id="gridRegistered_lblExpectationStudent_0">45</span>
-                                            </td>
-                                            <td align="center">
-                                                <span id="gridRegistered_lblCurrentStudent_0">36</span>
-                                            </td>
-                                            <td align="center">
-                                                <span id="gridRegistered_lblCourseCredit_0">3</span>
-
-                                            </td>
-                                            <td align="right">
-                                                <span id="gridRegistered_lblTuition_0"></span>
-
-                                            </td>
-                                            <td align="center">
-                                                <span id="gridRegistered_lblNote_0"></span>
-                                            </td>
-                                        </tr>
-                                        <tr class="cssRangeItem3" style="height:20px;">
-                                            <td align="center">2</td>
-                                            <td align="center">
-                                                <input id="gridRegistered_chkDelete_1" type="checkbox"
-                                                    name="gridRegistered$ctl03$chkDelete"
-                                                    onclick="CancelCourseClass(this);">
-
-
-
-
-                                                <input type="hidden" id="hidRgsCourseId"
-                                                    value="D56C6B82F85840EB8B63044C7C20C337">
-
-
-
-                                                <br>
-                                                <a id="gridRegistered_lnkDoiLop_1"
-                                                    href="javascript:__doPostBack('gridRegistered$ctl03$lnkDoiLop','')"
-                                                    style="font-weight:bold;">Đổi lớp</a>
-                                            </td>
-                                            <td style="font-weight:bold;">
-                                                <span id="gridRegistered_lblCourseClass_1">Tiếng anh chuyên
-                                                    ngành-2-2-23(N05.BT1)</span>
-                                            </td>
-                                            <td>
-                                                <span id="gridRegistered_lblCourseCode_1">ANHCNTT.3</span>
-                                            </td>
-                                            <td>
-                                                <span id="gridRegistered_lblLongTime_1">Từ 01/04/2024 đến
-                                                    28/04/2024:<br>&nbsp;&nbsp;&nbsp;<b>Thứ 2 tiết 13,14,15,16
-                                                        (BTap)</b><br>&nbsp;&nbsp;&nbsp;<b>Thứ 6 tiết 13,14,15,16
-                                                        (BTap)</b><br></span>
-
-                                            </td>
-                                            <td>
-                                                <span id="gridRegistered_lblLocation_1"> 506-A3 Giảng đường A3</span>
-                                            </td>
-                                            <td align="center">
-                                                <span id="gridRegistered_lblExpectationStudent_1">45</span>
-                                            </td>
-                                            <td align="center">
-                                                <span id="gridRegistered_lblCurrentStudent_1">36</span>
-                                            </td>
-                                            <td align="center">
-                                                <span id="gridRegistered_lblCourseCredit_1"></span>
-
-                                            </td>
-                                            <td align="right">
-                                                <span id="gridRegistered_lblTuition_1"></span>
-
-                                            </td>
-                                            <td align="center">
-                                                <span id="gridRegistered_lblNote_1"></span>
-                                            </td>
-                                        </tr>
+                                                        <br>
+                                                        <a id="gridRegistered_lnkDoiLop_0"
+                                                            href="{{ route('user.changeClass.form', ['class_section_id' => $item->classSection->class_section_id]) }}"
+                                                            style="font-weight:bold;">Đổi lớp</a>
+                                                    </td>
+                                                    <td style="font-weight:bold;">
+                                                        <span
+                                                            id="gridRegistered_lblCourseClass_0">{{ $item->classSection->class_section_name }}({{ $item->classSection->class_section_code }})</span>
+                                                    </td>
+                                                    <td>
+                                                        <span
+                                                            id="gridRegistered_lblCourseCode_0">{{ $item->classSection->semesterSubject->subject->subject_code }}</span>
+                                                    </td>
+                                                    <td>
+                                                        @foreach ($item->classSection->startEndDate as $startEndDate)
+                                                            <span id="gridRegistered_lblLongTime_0">Từ
+                                                                {{ $startEndDate->start_date }} đến
+                                                                {{ $startEndDate->end_date }}:
+                                                                @foreach ($startEndDate->schedule as $schedule)
+                                                                    <br>&nbsp;&nbsp;&nbsp;
+                                                                    <b>Thứ {{ $schedule->schedule_day }} tiết
+                                                                        {{ $schedule->schedule_time }} |
+                                                                        {{ $schedule->classroom->room_name }}-{{ $schedule->classroom->building_name }}</b>
+                                                                @endforeach
+                                                                <br>
+                                                            </span>
+                                                        @endforeach
+                                                    </td>
+                                                    <td align="center">
+                                                        <span
+                                                            id="gridRegistered_lblExpectationStudent_0">{{ $item->classSection->class_section_capacity }}</span>
+                                                    </td>
+                                                    <td align="center">
+                                                        <span
+                                                            id="gridRegistered_lblCurrentStudent_0">{{ $registrationNumber[$item->class_section_id] }}</span>
+                                                    </td>
+                                                    <td align="center">
+                                                        <span
+                                                            class="gridRegistered_lblCourseCredit_0">{{ $item->classSection->semesterSubject->subject->subject_credit }}</span>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    </tbody>
+                                    <tbody>
                                         <tr class="cssRangeItem4" align="center" style="height:20px;">
                                             <td>&nbsp;</td>
                                             <td>&nbsp;</td>
@@ -546,10 +542,7 @@
                                             <td>&nbsp;</td>
                                             <td>&nbsp;</td>
                                             <td>&nbsp;</td>
-                                            <td>&nbsp;</td>
-                                            <td align="center" style="font-weight:bold;">3</td>
-                                            <td align="right" style="font-weight:bold;">0</td>
-                                            <td align="center" style="font-weight:bold;">&nbsp;</td>
+                                            <td align="center" style="font-weight:bold;" id="totalCredits"></td>
                                         </tr>
                                     </tbody>
                                 </table>

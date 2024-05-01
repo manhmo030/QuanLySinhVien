@@ -9,14 +9,14 @@
             <div class="row page-titles mx-0">
                 <div class="col-sm-6 p-md-0">
                     <div class="welcome-text">
-                        <h4>Class Section List</h4>
+                        <h4>List of registered students</h4>
 
                     </div>
                 </div>
                 <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('admin.classSection.form') }}">Class Section</a></li>
-                        <li class="breadcrumb-item active"><a>Class Section List</a></li>
+                        <li class="breadcrumb-item active"><a>List of registered students</a></li>
                     </ol>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                             <div>
                                 @hasRole(['Admin', 'Editor'])
                                     <a href="{{ route('admin.addClassSection.form') }}"><Span class="btn btn-primary">
-                                            <i class="fa-solid fa-user-plus"></i> Add Class Section</Span></a>
+                                            <i class="fa-solid fa-user-plus"></i> Add Student</Span></a>
 
                                     <a style="display: none" id="delete-class-section-btn"><Span class="btn btn-primary">
                                             <i class="fa-solid fa-trash-can"></i> Delete</Span></a>
@@ -54,65 +54,57 @@
                                                 <th>#</th>
                                                 <th>Code</th>
                                                 <th>Name</th>
-                                                <th>Time</th>
-                                                <th>Capacity <i class="fa-solid fa-wrench"></i></th>
-                                                <th>Semester</th>
-                                                <th>Term</th>
-                                                <th>Register</th>
-                                                <th>Credit</th>
-
+                                                <th>Class</th>
+                                                <th>Process_points</th>
+                                                <th>Test_score</th>
+                                                <th>Final_grades</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
 
                                         <tbody>
-                                            @foreach ($classSection as $item)
+                                            @foreach ($listStudent as $item)
                                                 @php
                                                     $i++;
                                                 @endphp
-                                                <tr id="classSectionValue-{{ $item->class_section_id }}"
+                                                <tr id="classSectionValue-{{ $item->enrollmentDetail_id }}"
                                                     class="green-hover
                                                     @if ($i % 2 == 0) tr-background @endif ">
                                                     <td><input class="class-section-checked" type="checkbox"
                                                             name="classSectionChecked[]"
-                                                            value="{{ $item->class_section_id }}">
+                                                            value="{{ $item->enrollmentDetail_id }}">
                                                     </td>
-                                                    <td>{{ $item->class_section_code }}</td>
-                                                    <td>{{ $item->class_section_name }}</td>
+                                                    <td>{{ $item->enrollment->student->student_code }}</td>
+                                                    <td>{{ $item->enrollment->student->first_name }} {{ $item->enrollment->student->last_name }}</td>
+                                                    <td>{{ $item->enrollment->student->class->class_name }}_{{ $item->enrollment->student->class->course->course_name }}</td>
                                                     <td>
-                                                        @foreach ($item->startEndDate as $startEndDate)
-                                                            <p style=" margin-bottom:0px">
-                                                                <a
-                                                                    href="{{ route('admin.classSectionSchedule.form', ['start_end_date_id' => $startEndDate->start_end_date_id]) }}">{{ $startEndDate->start_date }}
-                                                                    /
-                                                                    {{ $startEndDate->end_date }}
-                                                                </a>
-                                                            </p>
-                                                            @foreach ($startEndDate->schedule as $schedule)
-                                                                <p
-                                                                    style="color: black; margin-left:10px; margin-bottom:0px">
-                                                                    T{{ $schedule->schedule_day }} period
-                                                                    {{ $schedule->schedule_time }} |
-                                                                    {{ $schedule->classroom->room_name }}-{{ $schedule->classroom->building_name }}
-                                                                </p>
-                                                            @endforeach
+                                                        @foreach ($listGrades as $gradesdetail)
+                                                            @if ($gradesdetail->grades->student_id == $item->enrollment->student_id)
+                                                                {{ $gradesdetail->process_points }}
+                                                            @endif
                                                         @endforeach
                                                     </td>
-                                                    <td contenteditable class="editable"
-                                                        data-class-section-id="{{ $item->class_section_id }}">
-                                                        {{ $item->class_section_capacity }}</td>
-                                                    <td>{{ $item->code->year }}_{{ $item->code->semester }}</td>
-                                                    <td>{{ $item->term->name }}</td>
-                                                    <td><a
-                                                            href="{{ route('admin.listStudentRegister.form', ['class_section_id' => $item->class_section_id]) }}">{{ $registrationNumbers[$item->class_section_id] }}</a>
+                                                    <td>
+                                                        @foreach ($listGrades as $gradesdetail)
+                                                            @if ($gradesdetail->grades->student_id == $item->enrollment->student_id)
+                                                                {{ $gradesdetail->test_score }}
+                                                            @endif
+                                                        @endforeach
                                                     </td>
-                                                    <td>{{ $item->semesterSubject->subject->subject_credit }}</td>
-
+                                                    <td>
+                                                        @foreach ($listGrades as $gradesdetail)
+                                                            @if ($gradesdetail->grades->student_id == $item->enrollment->student_id)
+                                                                {{ $gradesdetail->final_grades }}
+                                                            @endif
+                                                        @endforeach
+                                                    </td>
+                                                    <td><a href="{{ route('admin.formgrades.form', ['class_section_id'=>$item->class_section_id, 'student_id'=> $item->enrollment->student_id]) }}"><i class="fa-solid fa-pen-to-square"></i></a></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
                                     <div>
-                                        {{ $classSection->links() }}
+                                        {{-- {{ $listStudent->links() }} --}}
                                     </div>
                                 </div>
                             </div>

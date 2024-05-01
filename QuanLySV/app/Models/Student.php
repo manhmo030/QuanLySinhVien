@@ -18,4 +18,8 @@ class Student extends Model
     public function class(){
         return $this->hasOne(Classs::class, 'class_id', 'class_id')->with('course', 'major');
     }
+
+    public function grades(){
+        return $this->hasMany(Grades::class, 'student_id', 'student_id')->with('gradesDetail');
+    }
 }

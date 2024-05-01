@@ -40,8 +40,6 @@
                                                         @foreach ($semesterSubject as $item)
                                                             <option value="{{ $item->semester_subject_id }}">
                                                                 {{ $item->subject->subject_name }}
-                                                                {{ $item->semester->semester_name }}_{{ $item->semester->school_year }}_{{ $item->semester->term }}
-                                                                {{ $item->semester->course->course_name }}
                                                             </option>
                                                         @endforeach
                                                     </select>

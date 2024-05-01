@@ -15,10 +15,14 @@ use App\Http\Controllers\Admin\PostsAdminController;
 use App\Http\Controllers\Admin\SemesterAdminController;
 use App\Http\Controllers\Admin\SubjectAdminController;
 use App\Http\Controllers\Admin\SubjectAssignmentController;
+use App\Http\Controllers\Qldt\InfoAccountContronller;
 use App\Http\Controllers\Qldt\LoginController;
 use App\Http\Controllers\Qldt\PostController;
+use App\Http\Controllers\Qldt\StudyMarkController;
 use App\Http\Controllers\Qldt\StudyRegisterController;
+use App\Http\Controllers\Qldt\StudyTimeController;
 use App\Http\Middleware\AccessPermission;
+use App\Models\ClassSection;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -160,6 +164,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/', [ClassSectionAdminController::class, 'form'])->name('admin.classSection.form');
         Route::get('/schedule/{start_end_date_id}', [ClassSectionAdminController::class, 'formSchedule'])->name('admin.classSectionSchedule.form');
         Route::get('/search', [ClassSectionAdminController::class, 'search'])->name('admin.searchClassSection.submit');
+        Route::get('/student/{class_section_id}', [ClassSectionAdminController::class, 'student'])->name('admin.listStudentRegister.form');
+        Route::get('/update-grades/{class_section_id}/{student_id}', [ClassSectionAdminController::class, 'formGrades'])->name('admin.formgrades.form');
+        Route::post('/update-grades', [ClassSectionAdminController::class, 'updateGrades'])->name('admin.updategrades.submit');
+
         Route::middleware(AccessPermission::class . ':Admin,Editor')->group(function () {
             Route::get('/add', [ClassSectionAdminController::class, 'formAdd'])->name('admin.addClassSection.form');
             Route::post('/add', [ClassSectionAdminController::class, 'add'])->name('admin.addClassSection.submit');
@@ -175,6 +183,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/update-sed/{start_end_date_id}', [ClassSectionAdminController::class, 'formupdateSed'])->name('admin.updateSed.form');
             Route::post('/update-sed/{start_end_date_id}', [ClassSectionAdminController::class, 'updateSed'])->name('admin.updateSed.submit');
             Route::post('/delete-sed/{start_end_date_id}', [ClassSectionAdminController::class, 'deleteSed'])->name('admin.deleteSed.submit');
+            Route::get('/update-grades/{gradesDetail_id}', [ClassSectionAdminController::class, 'formUpdateGrades'])->name('admin.updateGrades.form');
         });
     });
     Route::middleware(AccessPermission::class . ':Admin,Editor')->prefix('posts')->group(function () {
@@ -205,4 +214,16 @@ Route::prefix('qldt')->group(function () {
     Route::get('/study-register', [StudyRegisterController::class, 'form'])->name('user.studyRegister.form');
     Route::post('/show-class', [StudyRegisterController::class, 'listClass'])->name('user.listClass.submit');
     Route::post('/study-register', [StudyRegisterController::class, 'dangKy'])->name('user.studyRegister.submit');
+    Route::get('/study-time', [StudyTimeController::class, 'form'])->name('user.studyTime.form');
+    Route::post('/study-time', [StudyTimeController::class, 'studyTime'])->name('user.studyTime.submit');
+    Route::get('/change-class/{class_section_id}', [StudyRegisterController::class, 'changeClass'])->name('user.changeClass.form');
+    Route::post('/change-class', [StudyRegisterController::class, 'updateChangeClass'])->name('user.updateChangeClass.submit');
+    Route::get('/change-passwork', [LoginController::class, 'formchangePassword'])->name('user.changePassword.form');
+    Route::post('/change-password', [LoginController::class, 'changePassword'])->name('user.changePassword.submit');
+    Route::get('/study-mark', [StudyMarkController::class, 'form'])->name('user.studyMark.form');
+    Route::get('/info', [InfoAccountContronller::class, 'form'])->name('user.info.form');
+    Route::post('/info', [InfoAccountContronller::class, 'update'])->name('user.info.submit');
+    Route::post('/study-mark-code', [StudyMarkController::class, 'chonhocky'])->name('user.studyMarkCode.submit');
+    Route::get('/test', [StudyMarkController::class, 'test']);
+
 });

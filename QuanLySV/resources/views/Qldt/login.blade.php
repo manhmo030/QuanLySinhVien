@@ -1,7 +1,7 @@
 @extends('LayoutUser.index')
 @section('user_content')
     <section>
-        <div class="container-fluid mt-5 p-0 home">
+        <div class="container-fluid mt-5 p-0 home" >
             <table id="tblMain" height="70%" width="100%" align="center" border="0">
                 <tbody>
                     <tr>
@@ -23,6 +23,7 @@
                                                 <td valign="middle" align="center">
                                                     <form action="{{ route('user.login.submit') }}" method="POST">
                                                         @csrf
+
                                                         <table id="Table2" cellspacing="1" cellpadding="0"
                                                             border="0">
                                                             <tbody>
@@ -44,19 +45,22 @@
                                                                 <tr>
                                                                     <td class="labelHeader" align="right">
                                                                         <input type="submit" name="btnSubmit"
-                                                                            value="Đăng nhập"
-                                                                            id="btnSubmit">&nbsp;
+                                                                            value="Đăng nhập" id="btnSubmit">&nbsp;
                                                                     </td>
                                                                     <td>&nbsp;<input onclick="GoHome();" type="button"
                                                                             value="Về trang chủ"></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td class="labelHeader" colspan="2" align="center">
-                                                                        <span id="lblErrorInfo" style="color:Red;"></span>
+                                                                        <span id="lblErrorInfo" style="color:Red;">
+                                                                            @if (session()->has('error') && ($error = session('error')))
+                                                                                {{ $error }}
+                                                                            @endif
+                                                                        </span>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td class="labelHeader" colspan="2" align="center"><a
+                                                                    <td class="labelHeader" colspan="2" align="center"><a style="color: #0066cc"
                                                                             href="LostPassword.aspx">[ Quên mật khẩu ]</a>
                                                                     </td>
                                                                 </tr>

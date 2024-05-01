@@ -5,19 +5,25 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Classroom;
 use App\Models\ClassSection;
+use App\Models\Code;
 use App\Models\EnrollmentDetail;
+use App\Models\Grades;
+use App\Models\GradesDetail;
 use App\Models\Schedule;
 use App\Models\SemesterSubject;
 use App\Models\StartEndDate;
+use App\Models\Student;
 use App\Models\Subject;
+use App\Models\Term;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ClassSectionAdminController extends Controller
 {
     public function form()
     {
-        $classSection = ClassSection::with('startEndDate', 'enrollmentDetail', 'semesterSubject')->orderBy('class_section_id', 'DESC')
+        $classSection = ClassSection::with('startEndDate', 'enrollmentDetail', 'semesterSubject', 'code', 'term')->orderBy('class_section_id', 'DESC')
             ->paginate(10);
         foreach ($classSection as $item) {
             $registration_number = EnrollmentDetail::where('class_section_id', $item->class_section_id)
@@ -49,6 +55,8 @@ class ClassSectionAdminController extends Controller
             'class_section_capacity' => 'required|integer',
 
         ]);
+        $code = Code::where('on_off', 1)->first();
+        $term = Term::where('on_off', 1)->first();
         $semesterSubject = SemesterSubject::where('semester_subject_id', $request->semester_subject_id)->first();
         $subjectId = $semesterSubject->subject_id;
         $subjectItem = Subject::where('subject_id', $subjectId)->first();
@@ -62,7 +70,8 @@ class ClassSectionAdminController extends Controller
             'class_section_name' => $subjectItem->subject_name,
             'semester_subject_id' => $request->semester_subject_id,
             'class_section_capacity' => $request->class_section_capacity,
-
+            'code_id' => $code->code_id,
+            'term_id' => $term->term_id
         ]);
         if ($classSection !== null) { // laravel sẽ tự chuyển đổi thành true/false nên có thể dùng if($student)
             return redirect()->back()->with('success', 'Data has been processed successfully.');
@@ -249,6 +258,102 @@ class ClassSectionAdminController extends Controller
             return redirect()->route('admin.classSection.form')->with('success', 'Deleted successfully');
         } else {
             return redirect()->back();
+        }
+    }
+
+    public function student($class_section_id)
+    {
+        $listStudent = EnrollmentDetail::with('enrollment')
+            ->where('class_section_id', $class_section_id)
+            ->orderBy('enrollmentdetail_id', 'DESC')
+            ->get();
+        // dd($listStudent);
+        $listGrades = GradesDetail::with('grades')
+            ->where('class_section_id', $class_section_id)
+            ->get();
+        // dd($listStudent);
+        return view('Admin.ClassSection.listStudentRegister', compact('listStudent', 'listGrades'));
+    }
+
+    public function formGrades($class_section_id, $student_id)
+    {
+        $classSection = ClassSection::with('semesterSubject')
+            ->where('class_section_id', $class_section_id)->first();
+        // dd($classSection);
+        $student = Student::where('student_id', $student_id)->first();
+
+        $grades = Grades::where('student_id', $student_id)
+            ->where('subject_id', $classSection->semesterSubject->subject_id)->first();
+        //Nếu tồn tại điểm thì lấy chi tiết điểm đưa sang view
+        if ($grades !== null) {
+            $gradesDetail = GradesDetail::where('grades_id', $grades->grades_id)
+                ->where('class_section_id', $class_section_id)->first();
+            if ($gradesDetail !== null) {
+                // dd($gradesDetail);
+                return view('Admin.ClassSection.formGrades', compact('classSection', 'student', 'gradesDetail'));
+                //->with('gradesDetail', $gradesDetail);
+            }else{
+                return view('Admin.ClassSection.formGrades', compact('classSection', 'student'));
+            }
+        }else{
+            return view('Admin.ClassSection.formGrades', compact('classSection', 'student'));
+        }
+
+    }
+
+    public function updateGrades(Request $request)
+    {
+        // dd($request->subject_id);
+        $request->validate([
+            'process_points' => 'integer|max:10|min:0',
+            'test_score' => 'integer|max:10|min:0',
+            'final_grades' => 'integer|max:10|min:0'
+        ]);
+        $classSection = ClassSection::with('semesterSubject')->where('class_section_id', $request->class_section_id)
+            ->first();
+        $grades = Grades::where('student_id', $request->student_id)
+            ->where('subject_id', $classSection->semesterSubject->subject_id)
+            ->first();
+        if ($grades == null) {
+            $grade = Grades::create([
+                'student_id' => $request->student_id,
+                'subject_id' => $request->subject_id
+            ]);
+            $gradesDetail = GradesDetail::create([
+                'grades_id' => $grade->grades_id,
+                'process_points' => $request->process_points,
+                'test_score' => $request->test_score,
+                'final_grades' => $request->final_grades,
+                'attempt_number' => 1,
+                'class_section_id' => $request->class_section_id
+            ]);
+            return redirect()->route('admin.listStudentRegister.form', ['class_section_id' => $request->class_section_id]);
+        } else {
+            $gradesdeati = GradesDetail::where('class_section_id', $request->class_section_id)
+                ->where('grades_id', $grades->grades_id)->first();
+            if ($gradesdeati !== null) {
+                $gradesDetail = GradesDetail::where('grades_id', $grades->grades_id)
+                    ->where('class_section_id', $request->class_section_id)
+                    ->update([
+                        'process_points' => $request->process_points,
+                        'test_score' => $request->test_score,
+                        'final_grades' => $request->final_grades,
+                        // 'attempt_number' => $term,
+                    ]);
+                return redirect()->route('admin.listStudentRegister.form', ['class_section_id' => $request->class_section_id]);
+            } else {
+                $term = GradesDetail::where('grades_id', $grades->grades_id)->count();
+
+                $gradesDetail = GradesDetail::create([
+                    'grades_id' => $grades->grades_id,
+                    'process_points' => $request->process_points,
+                    'test_score' => $request->test_score,
+                    'final_grades' => $request->final_grades,
+                    'attempt_number' => $term + 1,
+                    'class_section_id' => $request->class_section_id
+                ]);
+                return redirect()->route('admin.listStudentRegister.form', ['class_section_id' => $request->class_section_id]);
+            }
         }
     }
 }

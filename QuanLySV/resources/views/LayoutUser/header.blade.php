@@ -11,7 +11,7 @@
         </span>
         <div id="box_user">
             <div id="PageHeader1_Panel1">
-                <p>
+                <p class="mt-2 mb-2">
                     <span id="PageHeader1_lblUserFullName" class="pr-2">
                         @php
                             use App\Models\Student;
@@ -21,7 +21,8 @@
                                 $student = Student::where('student_id', $studentId)->first();
                                 $first_name = $student->first_name;
                                 $last_name = $student->last_name;
-                                echo $first_name . ' ' . $last_name;
+                                $msv = $student->student_code;
+                                echo $first_name . ' ' . $last_name.' ('.$msv.')';
                             }
                         @endphp
                     </span>
