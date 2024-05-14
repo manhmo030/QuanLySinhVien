@@ -39,8 +39,17 @@
 
                             <div>
                                 <form action="{{ route('admin.searchStudent.submit') }}" method="GET">
-                                    <button type="submit" class="btn btn-primary">Search <i
-                                            class="fa-solid fa-magnifying-glass"></i></button>
+                                    <select class="form-control" id="val-skill" name="searchBy"
+                                        style="float: left; max-width: 100px; margin-right:10px">
+                                        <option value="1" {{ $searchBy == 1 ? 'selected' : '' }}>Code</option>
+                                        <option value="2" {{ $searchBy == 2 ? 'selected' : '' }}>Name</option>
+                                        <option value="3" {{ $searchBy == 3 ? 'selected' : '' }}>DOB</option>
+                                        <option value="4" {{ $searchBy == 4 ? 'selected' : '' }}>Gender</option>
+                                        <option value="5" {{ $searchBy == 5 ? 'selected' : '' }}>Address</option>
+                                        <option value="6" {{ $searchBy == 6 ? 'selected' : '' }}>Phone</option>
+                                        <option value="7" {{ $searchBy == 7 ? 'selected' : '' }}>Class</option>
+                                        <option value="8" {{ $searchBy == 8 ? 'selected' : '' }}>Email</option>
+                                    </select>
                                     <input type="text" name="keyword" value="{{ $keyword }}" class="search-input"
                                         aria-controls="example">
                                 </form>
@@ -81,7 +90,8 @@
                                                         class="green-hover
                                                         @if ($i % 2 == 0) tr-background @endif ">
                                                         <td><input class="student-checked" type="checkbox"
-                                                                name="studentsChecked[]" value="{{ $student->student_id }}">
+                                                                name="studentsChecked[]"
+                                                                value="{{ $student->student_id }}">
                                                         </td>
                                                         <td>{{ $student->student_code }}</td>
                                                         <td>{{ $student->first_name }} {{ $student->last_name }}</td>
@@ -91,8 +101,8 @@
                                                         {{-- <td>{{ $student->email }}</td> --}}
                                                         <td>{{ $student->phone }}</td>
                                                         <td>{{ $student->student_avatar }}</td>
-                                                        <td>{{ $student->class_name }}</td>
-                                                        <td>{{ $student->course_name }}</td>
+                                                        <td>{{ $student->class->class_name }}</td>
+                                                        <td>{{ $student->class->course->course_name }}</td>
                                                         <td><span><a href="{{ route('admin.updateStudent.form', ['student_id' => $student->student_id]) }}"
                                                                     class="mr-4" data-toggle="tooltip"
                                                                     data-placement="top" title="Edit"><i
@@ -105,7 +115,7 @@
                                             </tbody>
                                         </table>
                                         <div>
-                                            {{ $students->appends(['keyword' => $keyword])->links() }}
+                                            {{ $students->appends(['keyword' => $keyword, 'searchBy' => $searchBy])->links() }}
                                         </div>
                                     @endif
                                 </div>

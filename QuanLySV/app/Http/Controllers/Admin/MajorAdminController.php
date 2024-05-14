@@ -93,14 +93,20 @@ class MajorAdminController extends Controller
 
     public function searchMajor(Request $request)
     {
+        $searchBy = $request->searchBy;
         $keyword = $request->keyword;
-        $majors = Major::where('major_code', $request->keyword)
-            ->orWhere('major_name', 'like', '%' . $request->keyword . '%')
-            ->paginate(10);
-        if ($majors->isNotEmpty()) {
-            return view('Admin.Major.searchMajor', compact('majors', 'keyword'));
+        $query = Major::query();
+        if ($searchBy == '1') {
+            $query->where('major_code', $keyword);
+        } elseif ($searchBy == '2') {
+            $query->Where('major_name', 'like', '%' . $keyword . '%');
         }
-        $error = 'No matching data found';
-        return view('Admin.Major.searchMajor', compact('error', 'keyword'));
+        $majors = $query->paginate(10);
+        if ($majors->isEmpty()) {
+            $error = 'No matching data found';
+            return view('Admin.Major.searchMajor', compact('searchBy', 'keyword', 'error'));
+        }
+        return view('Admin.Major.searchMajor', compact('majors', 'keyword', 'searchBy'));
+
     }
 }

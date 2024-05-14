@@ -96,13 +96,19 @@ class SubjectAdminController extends Controller
     public function searchSubject(Request $request)
     {
         $keyword = $request->keyword;
-        $subjects = Subject::where('subject_code', $request->keyword)
-            ->orWhere('subject_name', 'like', '%' . $request->keyword . '%')
-            ->paginate(10);
-        if ($subjects->isNotEmpty()) {
-            return view('Admin.Subject.searchSubject', compact('subjects', 'keyword'));
+        $searchBy = $request->searchBy;
+        $query = Subject::query();
+        if ($searchBy == '1') {
+            $query->where('subject_code', $keyword);
+        } elseif ($searchBy == '2') {
+            $query->Where('subject_name', 'like', '%' . $keyword . '%');
         }
-        $error = 'No matching data found';
-        return view('Admin.Subject.searchSubject', compact('error', 'keyword'));
+        $subjects = $query->paginate(10);
+        if ($subjects->isEmpty()) {
+            $error = 'No matching data found';
+            return view('Admin.Subject.searchSubject', compact('searchBy', 'keyword', 'error'));
+        }
+        return view('Admin.Subject.searchSubject', compact('subjects', 'keyword', 'searchBy'));
+
     }
 }

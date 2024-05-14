@@ -38,10 +38,19 @@
                                 @endhasRole
                             </div>
 
-                            <div>
+                            <div style="width: 350px">
                                 <form action="{{ route('admin.searchTeacher.submit') }}" method="GET">
-                                    <button type="submit" class="btn btn-primary">Search <i
-                                            class="fa-solid fa-magnifying-glass"></i></button>
+                                    <select class="form-control" id="val-skill" name="searchBy"
+                                        style="float: left; max-width: 100px; margin-right:10px">
+                                        <option value="1" {{ $searchBy == 1 ? 'selected' : '' }}>Code</option>
+                                        <option value="2" {{ $searchBy == 2 ? 'selected' : '' }}>Name</option>
+                                        <option value="3" {{ $searchBy == 3 ? 'selected' : '' }}>Email</option>
+                                        <option value="4" {{ $searchBy == 4 ? 'selected' : '' }}>Phone</option>
+                                        <option value="5" {{ $searchBy == 5 ? 'selected' : '' }}>Address</option>
+                                        <option value="6" {{ $searchBy == 6 ? 'selected' : '' }}>DOB</option>
+                                        <option value="7" {{ $searchBy == 7 ? 'selected' : '' }}>Faculty</option>
+                                        <option value="8" {{ $searchBy == 8 ? 'selected' : '' }}>Title</option>
+                                    </select>
                                     <input type="text" name="keyword" value="{{ $keyword }}" class="search-input"
                                         aria-controls="example">
                                 </form>
@@ -65,7 +74,7 @@
                                                     <th>Address</th>
                                                     <th>DOB</th>
                                                     <th>Gender</th>
-                                                    <th>Department</th>
+                                                    <th>Faculty</th>
                                                     <th>Title</th>
                                                     <th>Avatar</th>
                                                     <th>Action</th>
@@ -81,7 +90,8 @@
                                                         class="green-hover
                                                     @if ($i % 2 == 0) tr-background @endif ">
                                                         <td><input class="student-checked" type="checkbox"
-                                                                name="studentsChecked[]" value="{{ $teacher->teacher_id }}">
+                                                                name="studentsChecked[]"
+                                                                value="{{ $teacher->teacher_id }}">
                                                         </td>
                                                         <td>{{ $teacher->teacher_code }}</td>
                                                         <td>{{ $teacher->teacher_name }}</td>
@@ -90,7 +100,7 @@
                                                         <td>{{ $teacher->teacher_address }}</td>
                                                         <td>{{ $teacher->teacher_date_of_birth }}</td>
                                                         <td>{{ $teacher->teacher_gender }}</td>
-                                                        <td>{{ $teacher->department_name }}</td>
+                                                        <td>{{ $teacher->faculty->faculty_name }}</td>
                                                         <td>{{ $teacher->teacher_title }}</td>
                                                         <td>{{ $teacher->teacher_avatar }}</td>
                                                         <td><span><a href="{{ route('admin.updateTeacher.form', ['teacher_id' => $teacher->teacher_id]) }}"
@@ -104,7 +114,7 @@
                                         </table>
 
                                         <div>
-                                            {{ $teachers->appends(['keyword' => $keyword])->links() }}
+                                            {{ $teachers->appends(['keyword' => $keyword, 'searchBy' => $searchBy])->links() }}
                                         </div>
                                     @endif
                                 </div>

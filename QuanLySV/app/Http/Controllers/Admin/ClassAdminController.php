@@ -23,7 +23,9 @@ class ClassAdminController extends Controller
     public function formAddClass()
     {
         $major = Major::get();
-        $teacher = Teacher::get();
+        $teacher = Teacher::whereNotIn('teacher_id', function ($query) {
+            $query->select('homeroom_teacher')->from('tbl_class');
+        })->get();
         $course = Course::get();
         return view('Admin.Class.addClass', compact('major', 'teacher', 'course'));
     }
@@ -54,9 +56,15 @@ class ClassAdminController extends Controller
     public function formUpdateClass($class_id)
     {
         $major = Major::get();
-        $teacher = Teacher::get();
-        $course = Course::get();
         $class = Classs::where('class_id', $class_id)->first();
+        $teacher = Teacher::whereNotIn('teacher_id', function ($query) use ($class) {
+            $query->select('homeroom_teacher')
+                  ->from('tbl_class')
+                  ->where('homeroom_teacher', '!=', $class->homeroom_teacher);
+        })->get();
+
+        $course = Course::get();
+
         return view('Admin.Class.updateClass', compact('class', 'major', 'teacher', 'course'));
     }
 
@@ -64,7 +72,11 @@ class ClassAdminController extends Controller
     {
         $class = Classs::where('class_id', $class_id)->first();
         $request->validate([
-            'class_code' => 'required|unique:tbl_class,class_code',
+            'class_code' => [
+                'required',
+                Rule::unique('tbl_class')->ignore($class->class_code, 'class_code')
+                // unique:tbl_class,class_code',
+            ],
             'class_name' => [
                 'required',
                 Rule::unique('tbl_class')->ignore($class->class_name, 'class_name')
@@ -106,13 +118,22 @@ class ClassAdminController extends Controller
     public function searchClass(Request $request)
     {
         $keyword = $request->keyword;
-        $class = Classs::where('class_code', $request->keyword)
-            ->orWhere('class_name', 'like', '%' . $request->keyword . '%')
-            ->paginate(10);
-        if ($class->isNotEmpty()) {
-            return view('Admin.Class.searchClass', compact('class', 'keyword'));
+        $searchBy = $request->searchBy;
+        $query = Classs::query();
+        if ($searchBy == '1') {
+            $query->where('class_code', $keyword);
+        } elseif ($searchBy == '2') {
+            $query->Where('class_name', 'like', '%' . $keyword . '%');
+        } elseif ($searchBy == '3') {
+            $query->whereHas('teacher', function ($query) use ($keyword) {
+                $query->where('teacher_name', 'like', '%' . $keyword . '%');
+            });
         }
-        $error = 'No matching data found';
-        return view('Admin.Class.searchClass', compact('error', 'keyword'));
+        $class = $query->paginate(10);
+        if ($class->isEmpty()) {
+            $error = 'No matching data found';
+            return view('Admin.Class.searchClass', compact('searchBy', 'keyword', 'error'));
+        }
+        return view('Admin.Class.searchClass', compact('class', 'keyword', 'searchBy'));
     }
 }

@@ -35,10 +35,14 @@
                                 @endhasRole
                             </div>
 
-                            <div>
+                            <div style="width: 350px">
                                 <form action="{{ route('admin.searchClass.submit') }}" method="GET">
-                                    <button type="submit" class="btn btn-primary">Search <i
-                                            class="fa-solid fa-magnifying-glass"></i></button>
+                                    <select class="form-control" id="val-skill" name="searchBy"
+                                        style="float: left; max-width: 100px; margin-right:10px">
+                                        <option value="1" {{ $searchBy == 1 ? 'selected' : '' }}>Code</option>
+                                        <option value="2" {{ $searchBy == 2 ? 'selected' : '' }}>Class</option>
+                                        <option value="3" {{ $searchBy == 3 ? 'selected' : '' }}>Teacher</option>
+                                    </select>
                                     <input type="text" name="keyword" class="search-input" aria-controls="example">
                                 </form>
                             </div>
@@ -89,7 +93,7 @@
                                             </tbody>
                                         </table>
                                         <div>
-                                            {{ $class->appends(['keyword' => $keyword])->links() }}
+                                            {{ $class->appends(['keyword' => $keyword, 'searchBy' => $searchBy])->links() }}
                                         </div>
                                     @endif
                                 </div>

@@ -50,11 +50,13 @@ class PostsAdminController extends Controller
     {
         $request->validate([
             'posts_title' => 'required',
-            'posts_content' => 'required'
+            'posts_content' => 'required',
+
         ]);
         $posts = Posts::where('posts_id', $posts_id)->update([
             'posts_title' => $request->posts_title,
             'posts_content' => $request->posts_content,
+            'updated_at' => now()
         ]);
         if ($posts !== null) {
             return redirect()->route('admin.posts.form')->with('success', 'Data has been processed successfully.');

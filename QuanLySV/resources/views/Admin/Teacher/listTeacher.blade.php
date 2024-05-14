@@ -38,10 +38,18 @@
                                 @endhasRole
                             </div>
 
-                            <div>
+                            <div style="width: 350px">
                                 <form action="{{ route('admin.searchTeacher.submit') }}" method="GET">
-                                    <button type="submit" class="btn btn-primary">Search <i
-                                            class="fa-solid fa-magnifying-glass"></i></button>
+                                    <select class="form-control" id="val-skill" name="searchBy"  style="float: left; max-width: 100px; margin-right:10px">
+                                        <option value="1">Code</option>
+                                        <option value="2">Name</option>
+                                        <option value="3">Email</option>
+                                        <option value="4">Phone</option>
+                                        <option value="5">Address</option>
+                                        <option value="6">DOB</option>
+                                        <option value="7">Faculty</option>
+                                        <option value="8">Title</option>
+                                    </select>
                                     <input type="text" name="keyword" class="search-input" aria-controls="example">
                                 </form>
                             </div>

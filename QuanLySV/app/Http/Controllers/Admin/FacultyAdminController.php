@@ -84,14 +84,20 @@ class FacultyAdminController extends Controller
 
     public function searchFaculty(Request $request)
     {
+        $searchBy = $request->searchBy;
         $keyword = $request->keyword;
-        $facultys = Faculty::where('faculty_code', $request->keyword)
-            ->orWhere('faculty_name', 'like', '%' . $request->keyword . '%')
-            ->paginate(10);
-        if ($facultys->isNotEmpty()) {
-            return view('Admin.Faculty.searchFaculty', compact('facultys', 'keyword'));
+        $query = Faculty::query();
+        if ($searchBy == '1') {
+            $query->where('faculty_code', $keyword);
+        } elseif ($searchBy == '2') {
+            $query->Where('faculty_name', 'like', '%' . $keyword . '%');
         }
-        $error = 'No matching data found';
-        return view('Admin.Faculty.searchFaculty', compact('error', 'keyword'));
+        $facultys = $query->paginate(10);
+        if ($facultys->isEmpty()) {
+            $error = 'No matching data found';
+            return view('Admin.Faculty.searchFaculty', compact('searchBy', 'keyword', 'error'));
+        }
+        return view('Admin.Faculty.searchFaculty', compact('facultys', 'keyword', 'searchBy'));
+
     }
 }

@@ -50,9 +50,14 @@ Route::prefix('admin')->group(function () {
         Route::get('/logout', [LoginAdminController::class, 'logout'])->name('admin.logout');
     });
     Route::get('/dash-board', [LoginAdminController::class, 'formDashBoard'])->name('admin.dashboard');
+
     Route::prefix('student')->group(function () {
         Route::get('/', [StudentAdminController::class, 'formStudent'])->name('admin.student.form');
         Route::get('/search-student', [StudentAdminController::class, 'searchStudent'])->name('admin.searchStudent.submit');
+        Route::post('/filter', [StudentAdminController::class, 'filter'])->name('filter.student.submit');
+        Route::get('get-major/{facultyId}', [StudentAdminController::class, 'getMajor']);
+        Route::get('get-class/{classId}', [StudentAdminController::class, 'getClass']);
+
         Route::middleware(AccessPermission::class . ':Admin,Editor')->group(function () {
             Route::get('/add-student', [StudentAdminController::class, 'formAddStudent'])->name('admin.addStudent.form');
             Route::post('/add-student', [StudentAdminController::class, 'addStudent'])->name('admin.addStudent.submit');

@@ -54,7 +54,7 @@
                                                 <th>#</th>
                                                 <th>Title</th>
                                                 <th>Admin</th>
-                                                <th>Created_at</th>
+                                                <th>Updated_at</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -72,7 +72,7 @@
                                                     </td>
                                                     <td>{{ $item->posts_title }}</td>
                                                     <td>{{ $item->admin_name }}</td>
-                                                    <td>{{ $item->created_at }}</td>
+                                                    <td>{{ $item->updated_at }}</td>
                                                     <td><span><a href="{{ route('admin.updatePosts.form', ['posts_id' => $item->posts_id]) }}"
                                                                 class="mr-4" data-toggle="tooltip" data-placement="top"
                                                                 title="Edit"><i class="fa-solid fa-pen-to-square"></i>

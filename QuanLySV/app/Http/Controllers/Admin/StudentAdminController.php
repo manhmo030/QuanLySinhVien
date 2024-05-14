@@ -7,6 +7,9 @@ use App\Exports\TemplateStudent;
 use App\Http\Controllers\Controller;
 use App\Imports\StudentsImport;
 use App\Models\Classs;
+use App\Models\Course;
+use App\Models\Faculty;
+use App\Models\Major;
 use App\Models\Student;
 use App\Models\StudentAccount;
 use Illuminate\Http\Request;
@@ -19,10 +22,15 @@ class StudentAdminController extends Controller
 {
     public function formStudent()
     {
-        $students = Student::join('tbl_class', 'tbl_class.class_id', '=', 'tbl_student.class_id')
-            ->join('tbl_course', 'tbl_class.course_id', '=', 'tbl_course.course_id')
-            ->orderBy('student_id', 'DESC')->paginate(10);
-        return view('Admin.Student.listStudent', compact('students'));
+        // $students = Student::join('tbl_class', 'tbl_class.class_id', '=', 'tbl_student.class_id')
+        //     ->join('tbl_course', 'tbl_class.course_id', '=', 'tbl_course.course_id')
+        //     ->orderBy('student_id', 'DESC')->paginate(10);
+        $students = Student::with('class')->orderBy('student_id', 'DESC')->paginate(10);
+        $course = Course::get();
+        $faculty = Faculty::get();
+        $major = Major::get();
+        $class = Classs::get();
+        return view('Admin.Student.listStudent', compact('students', 'course', 'faculty', 'major', 'class'));
     }
 
     public function formAddStudent()
@@ -137,24 +145,40 @@ class StudentAdminController extends Controller
 
     public function searchStudent(Request $request)
     {
+        $searchBy = $request->searchBy;
         $keyword = $request->keyword;
         $keywords = explode(' ', $keyword);
         $firstName = $keywords[0];
         $lastName = $keywords[count($keywords) - 1];
-        $students = Student::join('tbl_class', 'tbl_class.class_id', '=', 'tbl_student.class_id')
-            ->join('tbl_course', 'tbl_class.course_id', '=', 'tbl_course.course_id')
-            ->where('student_code', $keyword)
-            ->orWhere('first_name', 'like', '%' . $firstName . '%')
-            ->orWhere('last_name', 'like', '%' . $lastName . '%')
-            ->orWhere('first_name', 'like', '%' . $lastName . '%')
-            ->orWhere('last_name', 'like', '%' . $firstName . '%')
-            ->paginate(5); // trả về 1 mảng
-        if ($students->isNotEmpty()) {
-            return view('Admin.Student.searchStudent', compact('students', 'keyword'));
-        } else {
-            $error = 'No matching data found';
-            return view('Admin.Student.searchStudent', compact('error', 'keyword'));
+        $query = Student::query()->with('class');
+        if ($searchBy == '1') {
+            $query->where('student_code', $keyword);
+        } elseif ($searchBy == '2') {
+            $query->Where('first_name', 'like', '%' . $firstName . '%')
+                ->orWhere('last_name', 'like', '%' . $lastName . '%')
+                ->orWhere('first_name', 'like', '%' . $lastName . '%')
+                ->orWhere('last_name', 'like', '%' . $firstName . '%');
+        } elseif ($searchBy == '3') {
+            $query->whereDate('date_of_birth', $keyword);
+        } elseif ($searchBy == '4') {
+            $query->where('gender', 'like', '%' . $keyword . '%');
+        } elseif ($searchBy == '5') {
+            $query->where('address', 'like', '%' . $keyword . '%');
+        } elseif ($searchBy == '6') {
+            $query->where('phone ', $keyword);
+        } elseif ($searchBy == '7') {
+            $query->whereHas('class', function ($query) use ($keyword) {
+                $query->where('class_name', 'like', '%' . $keyword . '%');
+            });
+        } elseif ($searchBy == '8') {
+            $query->where('email', 'like', '%' . $keyword . '%');
         }
+        $students = $query->paginate(10);
+        if ($students->isEmpty()) {
+            $error = 'No matching data found';
+            return view('Admin.Student.searchStudent', compact('searchBy', 'keyword', 'error'));
+        }
+        return view('Admin.Student.searchStudent', compact('students', 'keyword', 'searchBy'));
     }
 
     public function exportStudents()
@@ -204,4 +228,50 @@ class StudentAdminController extends Controller
             }
         }
     }
+
+    public function filter(Request $request)
+    {
+        $f = $request->faculty;
+        $m = $request->major;
+        $cl = $request->class;
+        $c = $request->course;
+        $query = Student::query()
+            ->join('tbl_class', 'tbl_class.class_id', '=', 'tbl_student.class_id')
+            ->join('tbl_course', 'tbl_class.course_id', '=', 'tbl_course.course_id')
+            ->join('tbl_major', 'tbl_major.major_id', '=', 'tbl_class.major_id')
+            ->join('tbl_faculty', 'tbl_faculty.faculty_id', '=', 'tbl_major.faculty_id');
+
+        if ($request->faculty !== null) {
+            $query->where('tbl_faculty.faculty_id', $request->faculty);
+        }
+        if ($request->major !== null) {
+            $query->where('tbl_major.major_id', $request->major);
+        }
+        if ($request->class !== null) {
+            $query->where('tbl_class.class_id', $request->class);
+        }
+        if ($request->course !== null) {
+            $query->where('tbl_course.course_id', $request->course);
+        }
+
+        $students = $query->paginate(10);
+
+        $course = Course::get();
+        $faculty = Faculty::get();
+        $major = Major::get();
+        $class = Classs::get();
+        return view('Admin.Student.listStudent', compact('students', 'course', 'faculty', 'major', 'class', 'f', 'm', 'cl', 'c'));
+    }
+
+    public function getMajor($facultyId)
+    {
+        $major = Major::where('faculty_id', $facultyId)->get();
+        return response()->json($major);
+    }
+    public function getClass($major_id)
+    {
+        $classs = Classs::where('major_id', $major_id)->get();
+        return response()->json($classs);
+    }
+
 }

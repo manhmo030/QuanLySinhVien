@@ -129,18 +129,34 @@ class TeacherAdminController extends Controller
 
     public function searchTeacher(Request $request)
     {
+        $searchBy = $request->searchBy;
         $keyword = $request->keyword;
-        if ($keyword) {
-            $teachers = Teacher::join('tbl_faculty', 'tbl_faculty.faculty_id', '=', 'tbl_teacher.faculty_id')
-                ->where('teacher_code', $keyword)
-                ->orWhere('teacher_name', 'like', '%' . $keyword . '%')
-                ->paginate(5); // trả về 1 mảng
-            if ($teachers->isNotEmpty()) {
-                return view('Admin.Teacher.searchTeacher', compact('teachers', 'keyword'));
-            }
-            $error = 'No matching data found';
-            return view('Admin.Teacher.searchTeacher', compact('error', 'keyword'));
+        $query = Teacher::query();
+        if ($searchBy == '1') {
+            $query->where('teacher_code', $keyword);
+        } elseif ($searchBy == '2') {
+            $query->Where('teacher_name', 'like', '%' . $keyword . '%');
+        } elseif ($searchBy == '3') {
+            $query->where('teacher_email', 'like', '%' . $keyword . '%');
+        } elseif ($searchBy == '4') {
+            $query->where('teacher_phone ', $keyword);
+        } elseif ($searchBy == '5') {
+            $query->where('teacher_address', 'like', '%' . $keyword . '%');
+        } elseif ($searchBy == '6') {
+            $query->whereDate('teacher_date_of_birth', $keyword);
+        } elseif ($searchBy == '7') {
+            $query->whereHas('faculty', function ($query) use ($keyword) {
+                $query->where('faculty_name', 'like', '%' . $keyword . '%');
+            });
+        } elseif ($searchBy == '8') {
+            $query->where('teacher_title', 'like', '%' . $keyword . '%');
         }
+        $teachers = $query->paginate(10);
+        if ($teachers->isEmpty()) {
+            $error = 'No matching data found';
+            return view('Admin.Teacher.searchTeacher', compact('searchBy', 'keyword', 'error'));
+        }
+        return view('Admin.Teacher.searchTeacher', compact('teachers', 'keyword', 'searchBy'));
     }
 
     public function deleteTeacher(Request $request)
