@@ -18,6 +18,52 @@ $(document).ready(function () {
             }
         });
     });
+    //term
+    $('.term-checked').change(function () {
+        if ($('.term-checked:checked').length > 0) {
+            $('#delete-term-btn').show(); // Hiển thị nút button khi có ít nhất một checkbox được chọn
+        } else {
+            $('#delete-term-btn').hide(); // Ẩn nút button khi không có checkbox được chọn
+        }
+    });
+    $('#delete-term-btn').click(function () {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this data!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Xử lý khi người dùng đồng ý
+                deleteTerm();
+            }
+        });
+    });
+    //code
+    $('.code-checked').change(function () {
+        if ($('.code-checked:checked').length > 0) {
+            $('#delete-code-btn').show(); // Hiển thị nút button khi có ít nhất một checkbox được chọn
+        } else {
+            $('#delete-code-btn').hide(); // Ẩn nút button khi không có checkbox được chọn
+        }
+    });
+    $('#delete-code-btn').click(function () {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this data!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Xử lý khi người dùng đồng ý
+                deleteCode();
+            }
+        });
+    });
     //student
     $('.student-checked').change(function () {
         if ($('.student-checked:checked').length > 0) {
@@ -346,6 +392,64 @@ $(document).ready(function () {
         });
     });
 });
+function deleteTerm() {  //xóa sinh viên ajax
+    var selectedItems = $("input[name='termChecked[]']:checked").map(function () {
+        return $(this).val();
+    }).get();
+
+    $.ajax({
+        method: 'POST',
+        url: '/admin/term/delete',
+        data: {
+            selected_items: selectedItems,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (response) {
+            if (response.success) {
+                $('#toast__hong').html(toastSuccess(response.success));
+                // Xóa hàng dữ liệu tương ứng khi xóa thành công
+                for (var i = 0; i < selectedItems.length; i++) {
+                    $("#termValue-" + selectedItems[i]).remove();
+                }
+            } else {
+                $('#toast__hong').html(toastError(response.error));
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            // Xử lý lỗi nếu yêu cầu Ajax không thành công bound data
+            $('#toast__hong').html(toastError('Cannot delete term a foreign key constraint fails'));
+        }
+    });
+}
+function deleteCode() {  //xóa sinh viên ajax
+    var selectedItems = $("input[name='codeChecked[]']:checked").map(function () {
+        return $(this).val();
+    }).get();
+
+    $.ajax({
+        method: 'POST',
+        url: '/admin/code/delete',
+        data: {
+            selected_items: selectedItems,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (response) {
+            if (response.success) {
+                $('#toast__hong').html(toastSuccess(response.success));
+                // Xóa hàng dữ liệu tương ứng khi xóa thành công
+                for (var i = 0; i < selectedItems.length; i++) {
+                    $("#codeValue-" + selectedItems[i]).remove();
+                }
+            } else {
+                $('#toast__hong').html(toastError(response.error));
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            // Xử lý lỗi nếu yêu cầu Ajax không thành công bound data
+            $('#toast__hong').html(toastError('Cannot delete code a foreign key constraint fails'));
+        }
+    });
+}
 function deleteSchedule() {  //xóa sinh viên ajax
     var selectedItems = $("input[name='scheduleChecked[]']:checked").map(function () {
         return $(this).val();

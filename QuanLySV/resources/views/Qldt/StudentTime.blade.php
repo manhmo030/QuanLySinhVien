@@ -214,4 +214,12 @@
         </div>
     </section>
     <script src="{{ asset('assetUser/js/study-register.js') }}"></script>
+
+    @if (session('success'))
+        <input type="hidden" id="inputToastSuccess" value="{{ session('success') }}">
+    @endif
+    @if (session('error'))
+        <input type="hidden" id="inputToastError" value="{{ session('error') }}">
+    @endif
+    <script src="{{ asset('assetAdmin/js/a/delete.js') }}"></script>
 @endsection

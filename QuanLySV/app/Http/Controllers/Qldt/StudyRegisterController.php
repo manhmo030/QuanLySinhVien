@@ -22,45 +22,43 @@ class StudyRegisterController extends Controller
     public function form()
     {
         $user = Auth::guard('user')->user();
-        if ($user) {
-            $studentId = $user->student_id;
-            //Thông tin sinh viên
-            $studentValue = Student::with('class')
-                ->where('student_id', $studentId)->first();
-            //Danh sách môn học để cho sv đky
-            $listSubject = SemesterSubject::with('subject')
-                ->whereHas('semester', function ($query) {
-                    $query->where('IsOpenForRegistration', 1);
+
+        $studentId = $user->student_id;
+        //Thông tin sinh viên
+        $studentValue = Student::with('class')
+            ->where('student_id', $studentId)->first();
+        //Danh sách môn học để cho sv đky
+        $listSubject = SemesterSubject::with('subject')
+            ->whereHas('semester', function ($query) {
+                $query->where('IsOpenForRegistration', 1);
+            })->get();
+        //Kiểm tra sv có thông tin đky học chưa
+        $enrollment = Enrollment::where('student_id', $studentId)->first();
+        //Lấy ra thông tin đợt đky này (đang mở)
+        $code = Code::where('on_off', 1)->first();
+        $term = Term::where('on_off', 1)->first();
+        //Có rồi thì lấy ra ds các lớp học phần sv đã đky trong đợt đky này
+        if ($enrollment !== null) {
+
+
+            //Lấy ds lớp học phần sv đky học trong đợt này
+            $enrollmentDetail = EnrollmentDetail::with('classSection')
+                ->where('enrollment_id', $enrollment->enrollment_id)
+                ->whereHas('classSection', function ($query) use ($code, $term) {
+                    $query->where('code_id', $code->code_id)
+                        ->where('term_id', $term->term_id);
                 })->get();
-            //Kiểm tra sv có thông tin đky học chưa
-            $enrollment = Enrollment::where('student_id', $studentId)->first();
-             //Lấy ra thông tin đợt đky này (đang mở)
-             $code = Code::where('on_off', 1)->first();
-             $term = Term::where('on_off', 1)->first();
-            //Có rồi thì lấy ra ds các lớp học phần sv đã đky trong đợt đky này
-            if ($enrollment !== null) {
-
-
-                //Lấy ds lớp học phần sv đky học trong đợt này
-                $enrollmentDetail = EnrollmentDetail::with('classSection')
-                    ->where('enrollment_id', $enrollment->enrollment_id)
-                    ->whereHas('classSection', function ($query) use ($code, $term) {
-                        $query->where('code_id', $code->code_id)
-                            ->where('term_id', $term->term_id);
-                    })->get();
-                //Lấy số lượng sv đky lớp
-                $registrationNumber = [];
-                foreach ($enrollmentDetail as $item) {
-                    $registration_numbers = EnrollmentDetail::where('class_section_id', $item->classSection->class_section_id)
-                        ->count();
-                    $registrationNumber[$item->class_section_id] = $registration_numbers;
-                }
-                return view('Qldt.StudyRegister', compact('studentValue', 'listSubject', 'code', 'enrollmentDetail', 'registrationNumber'));
+            //Lấy số lượng sv đky lớp
+            $registrationNumber = [];
+            foreach ($enrollmentDetail as $item) {
+                $registration_numbers = EnrollmentDetail::where('class_section_id', $item->classSection->class_section_id)
+                    ->count();
+                $registrationNumber[$item->class_section_id] = $registration_numbers;
             }
-
-            return view('Qldt.StudyRegister', compact('studentValue', 'listSubject', 'code'));
+            return view('Qldt.StudyRegister', compact('studentValue', 'listSubject', 'code', 'enrollmentDetail', 'registrationNumber'));
         }
-        return redirect()->route('user.logout.submit');
+
+        return view('Qldt.StudyRegister', compact('studentValue', 'listSubject', 'code'));
     }
 
     public function listClass(Request $request)
@@ -126,7 +124,10 @@ class StudyRegisterController extends Controller
             ]);
 
         }
+        $enrollment = Enrollment::where('student_id', $studentId)->first();
+        //lấy id đăng ký học
         $enrollmentId = $enrollment->enrollment_id;
+        // dd($enrollmentId);
         //Lấy id lớp học phần sv chọn
         $class_section_id = $request->radiodangky;
         //Lấy lớp học phần sv chọn

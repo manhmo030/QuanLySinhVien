@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginAdminController extends Controller
 {
+
     public function formLogin()
     {
         return view('Admin.Auth.login');
@@ -36,8 +37,5 @@ class LoginAdminController extends Controller
         return view('Admin.Auth.register');
     }
 
-    public function formDashBoard()
-    {
-        return view('Admin.DashBoard.dashboard');
-    }
+
 }

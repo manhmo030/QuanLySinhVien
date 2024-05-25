@@ -34,7 +34,7 @@
                                     <a href="{{ route('admin.exportStudents.submit') }}"><Span class="btn btn-primary">
                                             <i class="fa-solid fa-file-export"></i> Export</Span></a>
                                 @endhasRole
-                                @hasRole(['Delete'])
+                                @hasRole(['Delete', 'Admin'])
                                     <a style="display: none" id="delete-student-btn"><Span class="btn btn-primary">
                                             <i class="fa-solid fa-trash-can"></i> Delete</Span></a>
                                 @endhasRole

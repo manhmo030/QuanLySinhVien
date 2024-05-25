@@ -85,12 +85,7 @@
 
                                                         </form>
                                                     </td>
-                                                    <td><span><a style="display: none"
-                                                                onclick="IsOpenForRegistration('{{ $item->semester_id }}')"
-                                                                id="openSemester-{{ $item->semester_id }}" class="mr-4"
-                                                                data-toggle="tooltip" data-placement="top" title="Save"><i
-                                                                    class="fa-solid fa-floppy-disk"></i>
-                                                            </a></span>
+                                                    <td>
                                                         <script>
                                                             function IsOpenForRegistration(semester_id) {
                                                                 document.getElementById('IsOpenForRegistration-' + semester_id).submit();
@@ -98,11 +93,18 @@
                                                         </script>
                                                         <span><a href="{{ route('admin.listSemesterSubject.form', ['semester_id' => $item->semester_id]) }}"
                                                                 class="mr-4" data-toggle="tooltip" data-placement="top"
-                                                                title="List Subject in Semester"><i class="fa-solid fa-circle-info"></i>
+                                                                title="List Subject in Semester"><i
+                                                                    class="fa-solid fa-circle-info"></i>
                                                             </a></span>
                                                         <span><a href="{{ route('admin.updateSemester.form', ['semester_id' => $item->semester_id]) }}"
                                                                 class="mr-4" data-toggle="tooltip" data-placement="top"
                                                                 title="Edit"><i class="fa-solid fa-pen-to-square"></i>
+                                                            </a></span>
+                                                        <span><a style="display: none"
+                                                                onclick="IsOpenForRegistration('{{ $item->semester_id }}')"
+                                                                id="openSemester-{{ $item->semester_id }}" class="mr-4"
+                                                                data-toggle="tooltip" data-placement="top" title="Save"><i
+                                                                    class="fa-solid fa-floppy-disk"></i>
                                                             </a></span>
                                                     </td>
                                                 </tr>

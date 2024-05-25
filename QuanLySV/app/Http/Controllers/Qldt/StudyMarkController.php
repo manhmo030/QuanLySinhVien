@@ -31,9 +31,15 @@ class StudyMarkController extends Controller
     public function form()
     {
         $user = Auth::guard('user')->user();
-        if ($user) {
-            $studentId = $user->student_id;
-            $enrollment = Enrollment::where('student_id', $studentId)->first();
+
+        $studentId = $user->student_id;
+        //Thông tin sinh viên
+        $studentValue = Student::with('class')
+            ->where('student_id', $studentId)
+            ->first();
+        $enrollment = Enrollment::where('student_id', $studentId)->first();
+        if ($enrollment !== null) {
+            // dd($enrollment);
             //Lấy điểm all môn học mà sv đã học
             $grades = Grades::with('gradesDetail')
                 ->where('student_id', $studentId)
@@ -75,8 +81,15 @@ class StudyMarkController extends Controller
                 )
                 ->orderBy('tbl_class_section.code_id') //sắp xếp tăng dần theo học kỳ
                 ->get();
-
+            if ($result->isEmpty()) {
+                // dd('1');
+                $tbc10 = '';
+                $total_credit = '';
+                $tbc4 = '';
+                return view('Qldt.StudyMark', compact('grades', 'result', 'tbc10', 'total_credit', 'tbc4', 'studentValue'));
+            }
             //   dd($result);
+            // Lấy điểm các môn đã qua để tính tbc hệ 4
             $result1 = DB::table('tbl_enrollmentdetail')
                 ->join('tbl_class_section', 'tbl_class_section.class_section_id', '=', 'tbl_enrollmentdetail.class_section_id')
                 ->join('tbl_semester_subject', 'tbl_class_section.semester_subject_id', '=', 'tbl_semester_subject.semester_subject_id')
@@ -88,7 +101,15 @@ class StudyMarkController extends Controller
                 ->where('tbl_enrollmentdetail.enrollment_id', $enrollment->enrollment_id)
                 ->where('tbl_gradesdetail.final_grades', '>', 4) //chỉ lấy những môn đã đạt
                 ->get();
-            //dd($result1);
+
+            // if ($result->isEmpty()) {
+            //     dd('1');
+            //     $tbc10 = '';
+            //     $total_credit = '';
+            //     $tbc4 = '';
+            //     return view('Qldt.StudyMark', compact('grades', 'result', 'tbc10', 'total_credit', 'tbc4', 'studentValue'));
+            // }
+            // dd($result1);
             $total_credit = 0;
             $total_grades10 = 0;
             foreach ($result1 as $item) {
@@ -111,13 +132,10 @@ class StudyMarkController extends Controller
                 }
             }
             $tbc4 = round($total_grades4 / $total_credit, 2);       //toàn khóa
-            //Thông tin sinh viên
-            $studentValue = Student::with('class')
-                ->where('student_id', $studentId)
-                ->first();
+
             return view('Qldt.StudyMark', compact('grades', 'result', 'tbc10', 'total_credit', 'tbc4', 'studentValue'));
         }
-        return redirect()->route('user.login.form');
+        return redirect()->back()->with('error', 'You have not registered yet');
     }
 
     public function chonhocky(Request $request)
@@ -127,13 +145,13 @@ class StudyMarkController extends Controller
         $enrollment = Enrollment::where('student_id', $studentId)->first();
         if ($request->code_id != '') {
             $listGrades =
-            // EnrollmentDetail::with('classSection')
-            //     ->where('enrollment_id', $enrollment->enrollment_id)
-            //     ->whereHas('classSection', function ($query) use ($request) {
-            //         $query->where('code_id', $request->code_id);
-            //     })
-            //     ->get();
-            DB::table('tbl_enrollmentdetail')
+                // EnrollmentDetail::with('classSection')
+                //     ->where('enrollment_id', $enrollment->enrollment_id)
+                //     ->whereHas('classSection', function ($query) use ($request) {
+                //         $query->where('code_id', $request->code_id);
+                //     })
+                //     ->get();
+                DB::table('tbl_enrollmentdetail')
                 ->join('tbl_class_section', 'tbl_class_section.class_section_id', '=', 'tbl_enrollmentdetail.class_section_id')
                 ->join('tbl_semester_subject', 'tbl_class_section.semester_subject_id', '=', 'tbl_semester_subject.semester_subject_id')
                 ->join('tbl_subject', 'tbl_semester_subject.subject_id', '=', 'tbl_subject.subject_id')

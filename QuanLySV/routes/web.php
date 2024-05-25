@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ChartController;
 use App\Http\Controllers\Admin\ClassAdminController;
 use App\Http\Controllers\Admin\ClassroomAdminController;
 use App\Http\Controllers\Admin\ClassSectionAdminController;
+use App\Http\Controllers\Admin\CodeController;
 use App\Http\Controllers\Admin\CourseAdminController;
 use App\Http\Controllers\Admin\FacultyAdminController;
 use App\Http\Controllers\Admin\LoginAdminController;
@@ -15,6 +16,8 @@ use App\Http\Controllers\Admin\PostsAdminController;
 use App\Http\Controllers\Admin\SemesterAdminController;
 use App\Http\Controllers\Admin\SubjectAdminController;
 use App\Http\Controllers\Admin\SubjectAssignmentController;
+use App\Http\Controllers\Admin\TermController;
+use App\Http\Controllers\DashBoardController;
 use App\Http\Controllers\Qldt\InfoAccountContronller;
 use App\Http\Controllers\Qldt\LoginController;
 use App\Http\Controllers\Qldt\PostController;
@@ -22,6 +25,7 @@ use App\Http\Controllers\Qldt\StudyMarkController;
 use App\Http\Controllers\Qldt\StudyRegisterController;
 use App\Http\Controllers\Qldt\StudyTimeController;
 use App\Http\Middleware\AccessPermission;
+use App\Http\Middleware\AuthLoginUser;
 use App\Models\ClassSection;
 use Illuminate\Support\Facades\Route;
 
@@ -49,7 +53,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/register', [LoginAdminController::class, 'formRegister'])->name('admin.register.form');
         Route::get('/logout', [LoginAdminController::class, 'logout'])->name('admin.logout');
     });
-    Route::get('/dash-board', [LoginAdminController::class, 'formDashBoard'])->name('admin.dashboard');
+    Route::get('/dash-board', [DashBoardController::class, 'formDashBoard'])->name('admin.dashboard');
 
     Route::prefix('student')->group(function () {
         Route::get('/', [StudentAdminController::class, 'formStudent'])->name('admin.student.form');
@@ -147,9 +151,27 @@ Route::prefix('admin')->group(function () {
         Route::post('/update-course/{course_id}', [CourseAdminController::class, 'updateCourse'])->name('admin.updateCourse.submit');
         Route::post('/delete-course', [CourseAdminController::class, 'deleteCourse']);
     });
+    Route::prefix('code')->group(function () {
+        Route::get('/', [CodeController::class, 'form'])->name('admin.code.form');
+        Route::get('/add', [CodeController::class, 'formadd'])->name('admin.addCode.form');
+        Route::post('/add', [CodeController::class, 'add'])->name('admin.addCode.submit');
+        Route::get('/update/{code_id}', [CodeController::class, 'formUpdate'])->name('admin.updateCode.form');
+        Route::post('/update/{code_id}', [CodeController::class, 'update'])->name('admin.updateCode.submit');
+        Route::post('/delete', [CodeController::class, 'delete']);
+    });
+    Route::prefix('term')->group(function () {
+        Route::get('/', [TermController::class, 'form'])->name('admin.term.form');
+        Route::get('/add', [TermController::class, 'formadd'])->name('admin.addTerm.form');
+        Route::post('/add', [TermController::class, 'add'])->name('admin.addTerm.submit');
+        Route::get('/update/{term_id}', [TermController::class, 'formUpdate'])->name('admin.updateTerm.form');
+        Route::post('/update/{term_id}', [TermController::class, 'update'])->name('admin.updateTerm.submit');
+        Route::post('/delete', [TermController::class, 'delete']);
+    });
     Route::prefix('semester')->group(function () {
         Route::get('/', [SemesterAdminController::class, 'formSemester'])->name('admin.semester.form');
         Route::get('/list-semster-subject/{semester_id}', [SemesterAdminController::class, 'listSubjectInSemester'])->name('admin.listSemesterSubject.form');
+
+
         //Route::get('/search-semester', [SemesterAdminController::class, 'searchSemester'])->name('admin.searchSemester.submit');
         Route::middleware(AccessPermission::class . ':Admin,Editor')->group(function () {
             Route::get('/add-semester', [SemesterAdminController::class, 'formAddSemester'])->name('admin.addSemester.form');
@@ -170,6 +192,8 @@ Route::prefix('admin')->group(function () {
         Route::get('/schedule/{start_end_date_id}', [ClassSectionAdminController::class, 'formSchedule'])->name('admin.classSectionSchedule.form');
         Route::get('/search', [ClassSectionAdminController::class, 'search'])->name('admin.searchClassSection.submit');
         Route::get('/student/{class_section_id}', [ClassSectionAdminController::class, 'student'])->name('admin.listStudentRegister.form');
+        Route::get('/addstudent/{class_section_id}', [ClassSectionAdminController::class, 'addformstudentClassSection'])->name('admin.addStudentRegister.form');
+        Route::post('/addstudent/', [ClassSectionAdminController::class, 'addstudentClassSection'])->name('admin.addStudentRegister.submit');
         Route::get('/update-grades/{class_section_id}/{student_id}', [ClassSectionAdminController::class, 'formGrades'])->name('admin.formgrades.form');
         Route::post('/update-grades', [ClassSectionAdminController::class, 'updateGrades'])->name('admin.updategrades.submit');
 
@@ -214,21 +238,26 @@ Route::prefix('qldt')->group(function () {
     Route::get('', [LoginController::class, 'form'])->name('user.login.form');
     Route::post('', [LoginController::class, 'login'])->name('user.login.submit');
     Route::get('/logout', [LoginController::class, 'logout'])->name('user.logout.submit');
-    Route::get('post', [PostController::class, 'form'])->name('user.post.form');
-    Route::get('post-detail/{id}', [PostController::class, 'postDetail'])->name('user.postDetail.form');
-    Route::get('/study-register', [StudyRegisterController::class, 'form'])->name('user.studyRegister.form');
-    Route::post('/show-class', [StudyRegisterController::class, 'listClass'])->name('user.listClass.submit');
-    Route::post('/study-register', [StudyRegisterController::class, 'dangKy'])->name('user.studyRegister.submit');
-    Route::get('/study-time', [StudyTimeController::class, 'form'])->name('user.studyTime.form');
-    Route::post('/study-time', [StudyTimeController::class, 'studyTime'])->name('user.studyTime.submit');
-    Route::get('/change-class/{class_section_id}', [StudyRegisterController::class, 'changeClass'])->name('user.changeClass.form');
-    Route::post('/change-class', [StudyRegisterController::class, 'updateChangeClass'])->name('user.updateChangeClass.submit');
-    Route::get('/change-passwork', [LoginController::class, 'formchangePassword'])->name('user.changePassword.form');
-    Route::post('/change-password', [LoginController::class, 'changePassword'])->name('user.changePassword.submit');
-    Route::get('/study-mark', [StudyMarkController::class, 'form'])->name('user.studyMark.form');
-    Route::get('/info', [InfoAccountContronller::class, 'form'])->name('user.info.form');
-    Route::post('/info', [InfoAccountContronller::class, 'update'])->name('user.info.submit');
-    Route::post('/study-mark-code', [StudyMarkController::class, 'chonhocky'])->name('user.studyMarkCode.submit');
+    Route::get('post', [PostController::class, 'form'])->name('user.post.form')->middleware(AuthLoginUser::class);
+    Route::get('post-detail/{id}', [PostController::class, 'postDetail'])->name('user.postDetail.form')->middleware(AuthLoginUser::class);
+    Route::get('/study-register', [StudyRegisterController::class, 'form'])->name('user.studyRegister.form')->middleware(AuthLoginUser::class);
+    Route::post('/show-class', [StudyRegisterController::class, 'listClass'])->name('user.listClass.submit')->middleware(AuthLoginUser::class);
+    Route::post('/study-register', [StudyRegisterController::class, 'dangKy'])->name('user.studyRegister.submit')->middleware(AuthLoginUser::class);
+    Route::get('/study-time', [StudyTimeController::class, 'form'])->name('user.studyTime.form')->middleware(AuthLoginUser::class);
+    Route::post('/study-time', [StudyTimeController::class, 'studyTime'])->name('user.studyTime.submit')->middleware(AuthLoginUser::class);
+    Route::get('/change-class/{class_section_id}', [StudyRegisterController::class, 'changeClass'])->name('user.changeClass.form')->middleware(AuthLoginUser::class);
+    Route::post('/change-class', [StudyRegisterController::class, 'updateChangeClass'])->name('user.updateChangeClass.submit')->middleware(AuthLoginUser::class);
+    Route::get('/change-passwork', [LoginController::class, 'formchangePassword'])->name('user.changePassword.form')->middleware(AuthLoginUser::class);
+    Route::post('/change-password', [LoginController::class, 'changePassword'])->name('user.changePassword.submit')->middleware(AuthLoginUser::class);
+    Route::get('/study-mark', [StudyMarkController::class, 'form'])->name('user.studyMark.form')->middleware(AuthLoginUser::class);
+    Route::get('/info', [InfoAccountContronller::class, 'form'])->name('user.info.form')->middleware(AuthLoginUser::class);
+    Route::post('/info', [InfoAccountContronller::class, 'update'])->name('user.info.submit')->middleware(AuthLoginUser::class);
+    Route::post('/study-mark-code', [StudyMarkController::class, 'chonhocky'])->name('user.studyMarkCode.submit')->middleware(AuthLoginUser::class);
     Route::get('/test', [StudyMarkController::class, 'test']);
 
+    //quên mk
+    Route::get('/forgot-password', [LoginController::class, 'forgotPasswordForm'])->name('user.forgotpasssword.form');
+    Route::post('/forgot-password', [LoginController::class, 'forgotPassword'])->name('user.forgotpasssword.submit');
+    Route::get('/reset-password/{token}', [LoginController::class, 'resetPasswordForm'])->name('user.resetpassword.form');
+    Route::post('/reset-password', [LoginController::class, 'resetPassword'])->name('user.resetpassword.submit');
 });

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Classroom;
 use App\Models\ClassSection;
 use App\Models\Code;
+use App\Models\Enrollment;
 use App\Models\EnrollmentDetail;
 use App\Models\Grades;
 use App\Models\GradesDetail;
@@ -16,6 +17,7 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Term;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -272,7 +274,7 @@ class ClassSectionAdminController extends Controller
             ->where('class_section_id', $class_section_id)
             ->get();
         // dd($listStudent);
-        return view('Admin.ClassSection.listStudentRegister', compact('listStudent', 'listGrades'));
+        return view('Admin.ClassSection.listStudentRegister', compact('listStudent', 'listGrades', 'class_section_id'));
     }
 
     public function formGrades($class_section_id, $student_id)
@@ -292,22 +294,21 @@ class ClassSectionAdminController extends Controller
                 // dd($gradesDetail);
                 return view('Admin.ClassSection.formGrades', compact('classSection', 'student', 'gradesDetail'));
                 //->with('gradesDetail', $gradesDetail);
-            }else{
+            } else {
                 return view('Admin.ClassSection.formGrades', compact('classSection', 'student'));
             }
-        }else{
+        } else {
             return view('Admin.ClassSection.formGrades', compact('classSection', 'student'));
         }
-
     }
 
     public function updateGrades(Request $request)
     {
         // dd($request->subject_id);
         $request->validate([
-            'process_points' => 'integer|max:10|min:0',
-            'test_score' => 'integer|max:10|min:0',
-            'final_grades' => 'integer|max:10|min:0'
+            'process_points' => 'max:10|min:0',
+            'test_score' => 'max:10|min:0',
+            'final_grades' => 'max:10|min:0'
         ]);
         $classSection = ClassSection::with('semesterSubject')->where('class_section_id', $request->class_section_id)
             ->first();
@@ -355,5 +356,32 @@ class ClassSectionAdminController extends Controller
                 return redirect()->route('admin.listStudentRegister.form', ['class_section_id' => $request->class_section_id]);
             }
         }
+    }
+
+    public function addformstudentClassSection($class_section_id)
+    {
+        $student = Student::get();
+
+        return view('Admin.ClassSection.addStudent', compact('class_section_id', 'student'));
+    }
+
+    public function addstudentClassSection(Request $request)
+    {
+        //Lấy thông tin đky học
+        $enrollment = Enrollment::where('student_id', $request->student_code)->first();
+        //Chưa có thì tạo
+        if ($enrollment == null) {
+            $enrollment = Enrollment::create([
+                'student_id' => $request->student_code
+            ]);
+        }
+        $enrollment = Enrollment::where('student_id', $request->student_code)->first();
+        $enrollmentId = $enrollment->enrollment_id;
+        $enrollmentDetail = EnrollmentDetail::create([
+            'enrollment_id' => $enrollmentId,
+            'class_section_id' => $request->class_section_id,
+            'enrollmentDetail_date' => Carbon::now()
+        ]);
+        return redirect()->route('admin.listStudentRegister.form', ['class_section_id'=>$request->class_section_id]);
     }
 }

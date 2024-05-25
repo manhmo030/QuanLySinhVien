@@ -10,4 +10,7 @@ class Term extends Model
     use HasFactory;
     protected $table = 'tbl_term';
     protected $primaryKey = 'term_id';
+    public $timestamps = false;
+    protected $fillable = ['on_off', 'name'];
+
 }

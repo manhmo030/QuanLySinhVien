@@ -36,8 +36,9 @@ class StudentsExport implements FromCollection, WithTitle, WithHeadings
     public function collection()
     {
         //return Student::all();
-         return Student::join('tbl_class', 'tbl_class.class_id', '=', 'tbl_student.class_id')
-         ->get($this->selectedColumns);
+        return Student::join('tbl_class', 'tbl_class.class_id', '=', 'tbl_student.class_id')
+            ->join('tbl_course', 'tbl_course.course_id', '=', 'tbl_class.course_id')
+            ->get($this->selectedColumns);
     }
     public function title(): string
     {

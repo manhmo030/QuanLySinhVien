@@ -17,20 +17,15 @@ class StudyTimeController extends Controller
     public function form()
     {
         $user = Auth::guard('user')->user();
-        if ($user) {
-
-
-            $studentId = $user->student_id;
-            //Thông tin sinh viên
-            $studentValue = Student::with('class')
-                ->where('student_id', $studentId)->first();
-            //Lấy danh sách các kỳ học
-            $code = Code::orderBy('code_id', 'DESC')->get();
-            //Lấy danh sách đợt học
-            $term = Term::get();
-            return view('Qldt.StudentTime', compact('code', 'studentValue', 'term'));
-        }
-        return redirect()->route('user.login.form');
+        $studentId = $user->student_id;
+        //Thông tin sinh viên
+        $studentValue = Student::with('class')
+            ->where('student_id', $studentId)->first();
+        //Lấy danh sách các kỳ học
+        $code = Code::orderBy('code_id', 'DESC')->get();
+        //Lấy danh sách đợt học
+        $term = Term::get();
+        return view('Qldt.StudentTime', compact('code', 'studentValue', 'term'));
     }
 
     public function studyTime(Request $request)
@@ -42,6 +37,7 @@ class StudyTimeController extends Controller
         $user = Auth::guard('user')->user();
         $studentId = $user->student_id;
         $enrollment = Enrollment::where('student_id', $studentId)->first();
+        if ($enrollment == null) return redirect()->back()->with('error', 'You have not registered yet');
         //Lấy ds các lớp học phần sv đã đky trong kỳ học đó
         $enrollmentDetail = EnrollmentDetail::with('classSection')
             ->where('enrollment_id', $enrollment->enrollment_id)

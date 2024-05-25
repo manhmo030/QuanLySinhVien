@@ -42,13 +42,12 @@
                                                                             id="txtPassword" onblur="md5(this);">
                                                                     </td>
                                                                 </tr>
-                                                                <tr>
-                                                                    <td class="labelHeader" align="right">
+                                                                <tr><td></td>
+                                                                    <td class="labelHeader" align="left">
                                                                         <input type="submit" name="btnSubmit"
                                                                             value="Đăng nhập" id="btnSubmit">&nbsp;
                                                                     </td>
-                                                                    <td>&nbsp;<input onclick="GoHome();" type="button"
-                                                                            value="Về trang chủ"></td>
+
                                                                 </tr>
                                                                 <tr>
                                                                     <td class="labelHeader" colspan="2" align="center">
@@ -61,7 +60,7 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td class="labelHeader" colspan="2" align="center"><a style="color: #0066cc"
-                                                                            href="LostPassword.aspx">[ Quên mật khẩu ]</a>
+                                                                            href="{{ route('user.forgotpasssword.form') }}">[ Quên mật khẩu ]</a>
                                                                     </td>
                                                                 </tr>
                                                             </tbody>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 07, 2024 at 06:51 PM
+-- Generation Time: May 21, 2024 at 05:57 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -100,7 +100,8 @@ INSERT INTO `tbl_class` (`class_id`, `class_code`, `class_name`, `major_id`, `ho
 (4, 'N02', 'Công nghệ thông tin 2 ', 1, 48, 3),
 (5, 'N03', 'Công nghệ thông tin 3 ', 1, 49, 3),
 (6, 'N04', 'Công nghệ thông tin 4 ', 1, 50, 3),
-(7, 'N00', 'Công nghệ thông tin V.A ', 1, 51, 3);
+(7, 'N00', 'Công nghệ thông tin V.A ', 1, 51, 3),
+(9, 'A01', 'Kế toán 1', 6, 54, 4);
 
 -- --------------------------------------------------------
 
@@ -156,7 +157,8 @@ INSERT INTO `tbl_class_section` (`class_section_id`, `class_section_code`, `clas
 (21, 'csdl1', 'Cơ sở dữ liệu', 5, 10, 2, 1),
 (22, 'qlda1', 'Quản lý dự án', 7, 10, 1, 1),
 (23, 'CNW1', 'Công nghệ web', 9, 10, 1, 1),
-(24, 'CNW2', 'Công nghệ web', 9, 10, 2, 1);
+(24, 'CNW2', 'Công nghệ web', 9, 10, 2, 1),
+(25, 'MH01LTW_4', 'Lập trình web', 4, 63, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -223,11 +225,13 @@ CREATE TABLE `tbl_enrollmentdetail` (
 
 INSERT INTO `tbl_enrollmentdetail` (`enrollmentDetail_id`, `enrollment_id`, `class_section_id`, `enrollmentDetail_date`) VALUES
 (1, 1, 17, '2024-03-31'),
-(2, 2, 18, '2024-04-03'),
+(2, 2, 17, '2024-04-03'),
 (3, 2, 20, '2024-04-11'),
 (4, 2, 21, '2024-04-11'),
 (5, 2, 22, '2024-04-11'),
-(7, 1, 18, '2024-04-01');
+(7, 1, 18, '2024-04-01'),
+(8, 2, 24, '2024-05-14'),
+(9, 8, 17, '2024-05-20');
 
 -- --------------------------------------------------------
 
@@ -246,7 +250,8 @@ CREATE TABLE `tbl_enrollments` (
 
 INSERT INTO `tbl_enrollments` (`enrollment_id`, `student_id`) VALUES
 (1, 4),
-(2, 51);
+(2, 51),
+(8, 59);
 
 -- --------------------------------------------------------
 
@@ -300,7 +305,8 @@ INSERT INTO `tbl_grades` (`grades_id`, `student_id`, `subject_id`) VALUES
 (2, 51, 2),
 (5, 51, 23),
 (6, 51, 31),
-(7, 4, 1);
+(7, 4, 1),
+(8, 59, 1);
 
 -- --------------------------------------------------------
 
@@ -328,7 +334,9 @@ INSERT INTO `tbl_gradesdetail` (`gradesDetail_id`, `grades_id`, `process_points`
 (3, 2, 5, 5, 5.5, 1, 20),
 (5, 5, 7, 7, 7.1, 1, 21),
 (6, 6, 8, 8, 8.3, 1, 22),
-(8, 7, 5, 5, 6, 1, 18);
+(8, 7, 5, 5, 6, 1, 18),
+(9, 1, 5, 6, 7, 3, 17),
+(10, 8, 6, 5, 6, 1, 17);
 
 -- --------------------------------------------------------
 
@@ -393,6 +401,19 @@ INSERT INTO `tbl_major` (`major_id`, `major_code`, `major_name`, `faculty_id`) V
 (43, 'CN11KTATGT', 'Kỹ thuật An toàn giao thông', 11),
 (44, 'CN11KTMT', 'Kỹ thuật môi trường', 11),
 (45, 'CN12TUD', 'Toán ứng dụng', 12);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_passwordresettoken`
+--
+
+CREATE TABLE `tbl_passwordresettoken` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `token` varchar(255) DEFAULT NULL,
+  `created_at` date DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -485,7 +506,7 @@ CREATE TABLE `tbl_semester` (
 
 INSERT INTO `tbl_semester` (`semester_id`, `semester_name`, `IsOpenForRegistration`) VALUES
 (1, '1', 1),
-(2, '2', 0),
+(2, '2', 1),
 (3, '3', 1),
 (4, 'extra', 0);
 
@@ -584,7 +605,8 @@ INSERT INTO `tbl_student` (`student_id`, `student_code`, `first_name`, `last_nam
 (23, '201201111', 'Lữ', 'Pố', '2004-07-14', 'male', 'Ha Noi', 'lupo@gmail.com', '0372687311', 'gv1.jpg', 1),
 (51, '301200143', 'Thoại', 'Phạm', '2004-11-05', 'female', 'Hà Nội', 'phmamthooai@gmail.com', '9870043243', 'gv1.jpg', 1),
 (52, '301200144', 'Phạm', 'Thoại', '2004-11-05', 'female', 'Hà Nội', 'phmamthoai@gmail.com', '987004323', 'gv1.jpg', 1),
-(57, '234356787', 'G', 'G', '2024-03-05', 'female', 'g', 'g454@gmail.com', '0765556755', 'a.jpg', 2);
+(57, '234356787', 'G', 'G', '2024-03-05', 'female', 'g', 'g454@gmail.com', '0765556755', 'a.jpg', 2),
+(59, '4344544545', 'Hồng', 'Nguyễn', '2024-04-15', 'male', 'Ha Noi', 'nguyenhong31081@gmail.com', '0372687318', 'Screenshot 2023-03-13 161749.png', 1);
 
 -- --------------------------------------------------------
 
@@ -625,7 +647,8 @@ INSERT INTO `tbl_student_account` (`student_account_id`, `email`, `password`, `s
 (22, 'user22@gmail.com', '$2y$12$ykL2cXEhZBMlUKIUrtoQxu4ehJQ5FMCMtrYrCQ0odbPhrJ796FRai', 23),
 (102, 'aaa', '$2y$12$ykL2cXEhZBMlUKIUrtoQxu4ehJQ5FMCMtrYrCQ0odbPhrJ796FRai', 22),
 (104, '301200143', '$2y$12$nvxUCT757inCXTbZpCDOWOW8VA739cWl9eN5GJuyxzZVXLFHAip9C', 51),
-(105, '301200144', '$2y$12$232f9jXBFR.X52BwE3WNqervcUZ1SpJql3aj0bu8jEMkhL/ax9sMK', 52);
+(105, '301200144', '$2y$12$232f9jXBFR.X52BwE3WNqervcUZ1SpJql3aj0bu8jEMkhL/ax9sMK', 52),
+(109, 'nguyenhong31081@gmail.com', '$2y$12$A2nao3MFE6YXDGwq26ABfuzqnJt9PsVUEVcV76nosplaHyaaTjsEq', 59);
 
 -- --------------------------------------------------------
 
@@ -851,6 +874,12 @@ ALTER TABLE `tbl_major`
   ADD KEY `FK_major_faculty` (`faculty_id`) USING BTREE;
 
 --
+-- Indexes for table `tbl_passwordresettoken`
+--
+ALTER TABLE `tbl_passwordresettoken`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `tbl_posts`
 --
 ALTER TABLE `tbl_posts`
@@ -899,8 +928,6 @@ ALTER TABLE `tbl_start_end_date`
 ALTER TABLE `tbl_student`
   ADD PRIMARY KEY (`student_id`),
   ADD UNIQUE KEY `unique_student_code` (`student_code`),
-  ADD UNIQUE KEY `unique_student_phone` (`phone`),
-  ADD UNIQUE KEY `unique_student_email` (`email`),
   ADD KEY `FK_student_class` (`class_id`);
 
 --
@@ -963,7 +990,7 @@ ALTER TABLE `tbl_admin_roles`
 -- AUTO_INCREMENT for table `tbl_class`
 --
 ALTER TABLE `tbl_class`
-  MODIFY `class_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `class_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `tbl_classroom`
@@ -975,7 +1002,7 @@ ALTER TABLE `tbl_classroom`
 -- AUTO_INCREMENT for table `tbl_class_section`
 --
 ALTER TABLE `tbl_class_section`
-  MODIFY `class_section_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `class_section_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `tbl_code`
@@ -993,13 +1020,13 @@ ALTER TABLE `tbl_course`
 -- AUTO_INCREMENT for table `tbl_enrollmentdetail`
 --
 ALTER TABLE `tbl_enrollmentdetail`
-  MODIFY `enrollmentDetail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `enrollmentDetail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `tbl_enrollments`
 --
 ALTER TABLE `tbl_enrollments`
-  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `tbl_faculty`
@@ -1011,19 +1038,25 @@ ALTER TABLE `tbl_faculty`
 -- AUTO_INCREMENT for table `tbl_grades`
 --
 ALTER TABLE `tbl_grades`
-  MODIFY `grades_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `grades_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `tbl_gradesdetail`
 --
 ALTER TABLE `tbl_gradesdetail`
-  MODIFY `gradesDetail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `gradesDetail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `tbl_major`
 --
 ALTER TABLE `tbl_major`
   MODIFY `major_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+
+--
+-- AUTO_INCREMENT for table `tbl_passwordresettoken`
+--
+ALTER TABLE `tbl_passwordresettoken`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tbl_posts`
@@ -1065,13 +1098,13 @@ ALTER TABLE `tbl_start_end_date`
 -- AUTO_INCREMENT for table `tbl_student`
 --
 ALTER TABLE `tbl_student`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `tbl_student_account`
 --
 ALTER TABLE `tbl_student_account`
-  MODIFY `student_account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
+  MODIFY `student_account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
 
 --
 -- AUTO_INCREMENT for table `tbl_subject`

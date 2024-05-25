@@ -46,7 +46,7 @@
             <nav class="navbar navbar-expand">
                 <div class="collapse navbar-collapse justify-content-between">
                     <div class="header-left">
-                        <div class="search_bar dropdown">
+                        {{-- <div class="search_bar dropdown">
                             <span class="search_icon p-3 c-pointer" data-toggle="dropdown">
                                 <i class="mdi mdi-magnify"></i>
                             </span>
@@ -55,7 +55,7 @@
                                     <input class="form-control" type="search" placeholder="Search" aria-label="Search">
                                 </form>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
 
                     <ul class="navbar-nav header-right">
@@ -68,12 +68,12 @@
                             @endphp
                         </li>
                         <li class="nav-item dropdown notification_dropdown">
-                            <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                            {{-- <a class="nav-link" href="#" role="button" data-toggle="dropdown">
                                 <i class="mdi mdi-bell"></i>
                                 <div class="pulse-css"></div>
-                            </a>
+                            </a> --}}
                             <div class="dropdown-menu dropdown-menu-right">
-                                <ul class="list-unstyled">
+                                {{-- <ul class="list-unstyled">
                                     <li class="media dropdown-item">
                                         <span class="success"><i class="ti-user"></i></span>
                                         <div class="media-body">
@@ -126,7 +126,7 @@
                                     </li>
                                 </ul>
                                 <a class="all-notification" href="#">See all notifications <i
-                                        class="ti-arrow-right"></i></a>
+                                        class="ti-arrow-right"></i></a> --}}
                             </div>
                         </li>
                         <li class="nav-item dropdown header-profile">
@@ -142,10 +142,10 @@
                                     <i class="icon-user"></i>
                                     <span class="ml-2">Profile </span>
                                 </a>
-                                <a href="./email-inbox.html" class="dropdown-item">
+                                {{-- <a href="./email-inbox.html" class="dropdown-item">
                                     <i class="icon-envelope-open"></i>
                                     <span class="ml-2">Inbox </span>
-                                </a>
+                                </a> --}}
                                 <a href="{{ route('admin.logout') }}" class="dropdown-item">
                                     <i class="icon-key"></i>
                                     <span class="ml-2">Logout </span>
@@ -187,14 +187,25 @@
                     <ul aria-expanded="false">
                         <li><a href="{{ route('admin.classSection.form') }}">Class Section</a></li>
                         <li><a href="{{ route('admin.addClassSectionDate.form') }}">Add Date</a></li>
+                        {{-- <li><a href="{{ route('admin.classSection.form') }}">Class Section</a></li>
+                        <li><a href="{{ route('admin.classSection.form') }}">Term</a></li> --}}
+                    </ul>
+                </li>
+                <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                            class="icon icon-app-store"></i><span class="nav-text">Semester</span></a>
+                    <ul aria-expanded="false">
+                        <li><a href="{{ route('admin.semester.form') }}">Semester</a></li>
+
+                        <li><a href="{{ route('admin.code.form') }}">Information</a></li>
+                        <li><a href="{{ route('admin.term.form') }}">Term</a></li>
                     </ul>
                 </li>
                 <li><a href="{{ route('admin.student.form') }}" aria-expanded="false"><i
                             class="fa-solid fa-users"></i><span class="nav-text">Student</span></a></li>
                 <li><a href="{{ route('admin.teacher.form') }}" aria-expanded="false"><i
                             class="fa-solid fa-person-chalkboard"></i><span class="nav-text">Teacher</span></a></li>
-                <li><a href="{{ route('admin.semester.form') }}" aria-expanded="false"><i
-                            class="fa-solid fa-layer-group"></i><span class="nav-text">Semester</span></a></li>
+                {{-- <li><a href="{{ route('admin.semester.form') }}" aria-expanded="false"><i
+                            class="fa-solid fa-layer-group"></i><span class="nav-text">Semester</span></a></li> --}}
                 <li><a href="{{ route('admin.faculty.form') }}" aria-expanded="false"><i
                             class="fa-solid fa-building-columns"></i><span class="nav-text">Faculty</span></a></li>
                 <li><a href="{{ route('admin.major.form') }}" aria-expanded="false"><i
@@ -218,7 +229,7 @@
                     <li><a href="{{ route('admin.permissions.form') }}" aria-expanded="false"> <i
                                 class="fa-solid fa-user-tie"></i><span class="nav-text"> Grant Permissions</span></a></li>
                 @endhasRole
-                <li class="nav-label">Apps</li>
+                {{-- <li class="nav-label">Apps</li>
 
                 <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
                             class="icon icon-chart-bar-33"></i><span class="nav-text">Charts</span></a>
@@ -306,7 +317,7 @@
                         </li>
                         <li><a href="./page-lock-screen.html">Lock Screen</a></li>
                     </ul>
-                </li>
+                </li> --}}
             </ul>
         </div>
 

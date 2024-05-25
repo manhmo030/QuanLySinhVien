@@ -27,7 +27,7 @@
                         <div class="card-header card-margin">
                             <div>
                                 @hasRole(['Admin', 'Editor'])
-                                    <a href="{{ route('admin.addClassSection.form') }}"><Span class="btn btn-primary">
+                                    <a href="{{ route('admin.addStudentRegister.form', ['class_section_id'=> $class_section_id]) }}"><Span class="btn btn-primary">
                                             <i class="fa-solid fa-user-plus"></i> Add Student</Span></a>
 
                                     <a style="display: none" id="delete-class-section-btn"><Span class="btn btn-primary">

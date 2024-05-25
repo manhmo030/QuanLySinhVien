@@ -42,14 +42,14 @@ class StudentAdminController extends Controller
     public function addStudent(Request $request)
     {
         $request->validate([
-            'student_code' => 'required|size:9|unique:tbl_student,student_code',
+            'student_code' => 'required|unique:tbl_student,student_code',
             'first_name' => 'required',
             'last_name' => 'required',
             'date_of_birth' => 'required',
             'gender' => 'required',
             'address' => 'required',
-            'email' => 'required|unique:tbl_student,email|email',
-            'phone' => 'required|integer|digits:10|unique:tbl_student,phone',
+            'email' => 'required|email',
+            'phone' => 'required',
             'student_avatar' => 'required',
             'class_id' => 'required'
         ]);
@@ -70,8 +70,8 @@ class StudentAdminController extends Controller
 
         if ($student !== null) { // laravel sẽ tự chuyển đổi thành true/false nên có thể dùng if($student)
             StudentAccount::create([
-                'email' => $data['student_code'],
-                'password' => '1', //với trường password laravel sẽ tự động mã hóa trước khi lưu vào csdl
+                'email' => $data['email'],
+                'password' => bcrypt('1'), //với trường password laravel sẽ tự động mã hóa trước khi lưu vào csdl
                 'student_id' => $student->student_id
             ]);
             return redirect()->back()->with('success', 'Data has been processed successfully.');
@@ -93,7 +93,7 @@ class StudentAdminController extends Controller
         $request->validate([
             'student_code' => [
                 'required',
-                'size:9',
+
                 Rule::unique('tbl_student')
                     ->ignore($student->student_code, 'student_code')
                 //ignore(giá trị bỏ qua, tên cột)
@@ -110,10 +110,6 @@ class StudentAdminController extends Controller
             ],
             'phone' => [
                 'required',
-                'integer',
-                'digits:10',
-                Rule::unique('tbl_student')->ignore($student->phone, 'phone'),
-                'numeric'
             ],
             'class_id' => 'required'
         ]);

@@ -30,8 +30,8 @@ class StudentsImport implements ToModel, WithStartRow
         ]);
         if ($student) {
             StudentAccount::create([
-                'email' => $row[0],
-                'password' => '1',
+                'email' => $row[6],
+                'password' => bcrypt('1'),
                 'student_id' => $student->student_id
             ]);
         }

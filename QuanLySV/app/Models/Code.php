@@ -10,4 +10,7 @@ class Code extends Model
     use HasFactory;
     protected $table = 'tbl_code';
     protected $primaryKey = 'code_id';
+    public $timestamps = false;
+    protected $fillable = ['on_off', 'year', 'semester', 'time', 'end_date', 'start_date'];
+
 }
